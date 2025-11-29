@@ -12,7 +12,7 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
   return (
     <div className="flex items-center justify-between px-10 py-4 bg-white shadow-md">
       <div className="flex items-center gap-8">
-        <div className="text-2xl font-medium text-black">
+        <div className="text-2xl font-medium text-black font-['Fredoka']">
           polydash
         </div>
 
