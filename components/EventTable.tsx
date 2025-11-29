@@ -1,6 +1,8 @@
 // components/EventTable.tsx
+// components/EventTable.tsx
 'use client';
 
+import { useState, useMemo } from 'react';
 import { useState, useMemo } from 'react';
 import {
   Table,
@@ -181,6 +183,7 @@ export default function EventTable({ events, loading }: EventTableProps) {
             <TableRow 
               key={event.eventId} 
               className="hover:bg-gray-50 cursor-pointer transition-colors"
+              onClick={() => window.open(`https://polymarket.com/event/${event.slug}`, '_blank')}
               onClick={() => window.open(`https://polymarket.com/event/${event.slug}`, '_blank')}
             >
               <TableCell className="pl-6">
