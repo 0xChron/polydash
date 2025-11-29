@@ -1,28 +1,19 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
-
-
-import FilterPane from "@/components/FilterPane";
-import EventTable from "@/components/EventTable";
-
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Input } from "@/components/ui/input"
 import { Search, Filter } from "lucide-react";
+import { PolymarketEvent } from "@/lib/types";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("events");
+  const [events, setEvents] = useState<PolymarketEvent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({
     totalVolume: "",
     volume24hr: "",
@@ -32,6 +23,37 @@ export default function Home() {
     newEvents: false,
     featuredEvents: false,
   });
+
+  const fetchEvents = async () => {
+    try {
+      setLoading(true);
+      const params = new URLSearchParams();
+      
+      if (filters.totalVolume) params.append('minTotalVolume', filters.totalVolume);
+      if (filters.volume24hr) params.append('minVolume24hr', filters.volume24hr);
+      if (filters.volume1wk) params.append('minVolume1wk', filters.volume1wk);
+      if (filters.volume1mo) params.append('minVolume1mo', filters.volume1mo);
+      if (filters.volume1yr) params.append('minVolume1yr', filters.volume1yr);
+      if (filters.newEvents) params.append('new', 'true');
+      if (filters.featuredEvents) params.append('featured', 'true');
+      if (searchQuery) params.append('search', searchQuery);
+
+      const response = await fetch(`/api/events?${params.toString()}`);
+      const data = await response.json();
+
+      if (data.success) {
+        setEvents(data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching events:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEvents();
+  }, []); // Initial load
 
   const handleFilterChange = (key: string, value: string | boolean) => {
     setFilters(prev => ({ ...prev, [key]: value }));
@@ -49,11 +71,15 @@ export default function Home() {
     });
   };
 
+  const applyFilters = () => {
+    fetchEvents();
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="flex items-center justify-between px-10 py-4 bg-white shadow-md">
         <div className="flex items-center gap-8">
-          <div className="text-2xl font-medium text-black font-[family-name:var(--font-fredoka)]">
+          <div className="text-2xl font-medium text-black">
             polydash
           </div>
 
@@ -90,20 +116,17 @@ export default function Home() {
             </button>
           </div>
         </div>
-        <Button>
+        <Button onClick={() => window.open("https://polymarket.com/?via=lakan", "_blank")}>
           <Image 
             src="icon-white.svg"
             alt="polymarket icon"
             width={32}
             height={32}
             className="hover:cursor-pointer"
-            onClick={() => window.open("https://polymarket.com/?via=lakan", "_blank")}
           />
         </Button>
       </div>
 
-
-      {/* filters button */}
       <div className="bg-white min-h-screen p-8">
         {activeTab === "events" ? 
           <>
@@ -114,6 +137,9 @@ export default function Home() {
                   type="text"
                   placeholder="search active polymarket events"
                   className="rounded-full px-6 pl-12 w-full"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && fetchEvents()}
                 />
               </div>
               
@@ -131,7 +157,6 @@ export default function Home() {
                       <p className="text-sm text-gray-500">refine your search with filters</p>
                     </div>
 
-                    {/* Volume Filters */}
                     <div className="space-y-3">
                       <div className="space-y-2">
                         <Label htmlFor="totalVolume" className="text-sm font-medium">
@@ -199,7 +224,6 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* Checkbox Filters */}
                     <div className="space-y-3 pt-2">
                       <div className="flex items-center gap-2">
                         <input
@@ -228,7 +252,6 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* Action Buttons */}
                     <div className="flex gap-2 pt-4 border-t">
                       <Button 
                         variant="outline" 
@@ -237,7 +260,7 @@ export default function Home() {
                       >
                         Clear
                       </Button>
-                      <Button className="flex-1">
+                      <Button className="flex-1" onClick={applyFilters}>
                         Apply Filters
                       </Button>
                     </div>
@@ -245,7 +268,7 @@ export default function Home() {
                 </PopoverContent>
               </Popover>
             </div>
-            <EventTable />
+            {/* <EventTable events={events} loading={loading} /> */}
           </> : 
           <div>Markets content</div>
         }
