@@ -1,5 +1,7 @@
+// components/EventTable.tsx
 'use client';
 
+import { useState, useMemo } from 'react';
 import {
   Table,
   TableBody,
@@ -9,19 +11,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { PolymarketEvent } from "@/lib/types";
+import { Pagination } from "@/components/ui/pagination";
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(value);
-};
-
-const formatPercentage = (value: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'percent',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(value);
@@ -41,14 +36,25 @@ interface EventTableProps {
   loading: boolean;
 }
 
+const ITEMS_PER_PAGE = 50;
+
 export default function EventTable({ events, loading }: EventTableProps) {
-  const date = new Date().toLocaleDateString('en-US', { 
-    month: 'short', 
-    day: 'numeric', 
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Calculate pagination
+  const totalPages = Math.ceil(events.length / ITEMS_PER_PAGE);
+  
+  // Get current page items
+  const currentEvents = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    return events.slice(startIndex, endIndex);
+  }, [events, currentPage]);
+
+  // Reset to page 1 when events change (e.g., after filtering)
+  useMemo(() => {
+    setCurrentPage(1);
+  }, [events.length]);
 
   if (loading) {
     return (
@@ -80,10 +86,11 @@ export default function EventTable({ events, loading }: EventTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {events.map((event) => (
+          {currentEvents.map((event) => (
             <TableRow 
               key={event.eventId} 
               className="hover:bg-gray-50 cursor-pointer transition-colors"
+              onClick={() => window.open(`https://polymarket.com/event/${event.slug}`, '_blank')}
             >
               <TableCell className="pl-6">
                 <img 
@@ -113,11 +120,14 @@ export default function EventTable({ events, loading }: EventTableProps) {
           ))}
         </TableBody>
       </Table>
-      <div className="px-6 py-3 border-t border-gray-200 bg-gray-50">
-        <p className="text-xs text-gray-500">
-          Last updated {events.fetchDate} • Showing {events.length} events
-        </p>
-      </div>
+      
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+        itemsPerPage={ITEMS_PER_PAGE}
+        totalItems={events.length}
+      />
     </div>
   );
 }
