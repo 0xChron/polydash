@@ -1,5 +1,7 @@
+// components/EventTable.tsx
 'use client';
 
+import { useState, useMemo } from 'react';
 import {
   Table,
   TableBody,
@@ -9,19 +11,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { PolymarketEvent } from "@/lib/types";
+import { Pagination } from "@/components/ui/pagination";
+import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(value);
-};
-
-const formatPercentage = (value: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'percent',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(value);
@@ -41,14 +37,79 @@ interface EventTableProps {
   loading: boolean;
 }
 
+type SortKey = 'totalVolume' | 'volume24hr' | 'liquidity' | 'endDate';
+type SortOrder = 'asc' | 'desc' | null;
+
+const ITEMS_PER_PAGE = 50;
+
 export default function EventTable({ events, loading }: EventTableProps) {
-  const date = new Date().toLocaleDateString('en-US', { 
-    month: 'short', 
-    day: 'numeric', 
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [sortKey, setSortKey] = useState<SortKey | null>(null);
+  const [sortOrder, setSortOrder] = useState<SortOrder>(null);
+
+  // Handle sort
+  const handleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      // Cycle through: desc -> asc -> null
+      if (sortOrder === 'desc') {
+        setSortOrder('asc');
+      } else if (sortOrder === 'asc') {
+        setSortOrder(null);
+        setSortKey(null);
+      }
+    } else {
+      setSortKey(key);
+      setSortOrder('desc');
+    }
+    setCurrentPage(1); // Reset to first page when sorting
+  };
+
+  // Sort events
+  const sortedEvents = useMemo(() => {
+    if (!sortKey || !sortOrder) return events;
+
+    return [...events].sort((a, b) => {
+      let aValue: number | Date;
+      let bValue: number | Date;
+
+      if (sortKey === 'endDate') {
+        aValue = new Date(a[sortKey]);
+        bValue = new Date(b[sortKey]);
+      } else {
+        aValue = a[sortKey];
+        bValue = b[sortKey];
+      }
+
+      if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [events, sortKey, sortOrder]);
+
+  // Calculate pagination
+  const totalPages = Math.ceil(sortedEvents.length / ITEMS_PER_PAGE);
+  
+  // Get current page items
+  const currentEvents = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    return sortedEvents.slice(startIndex, endIndex);
+  }, [sortedEvents, currentPage]);
+
+  // Reset to page 1 when events change (e.g., after filtering)
+  useMemo(() => {
+    setCurrentPage(1);
+  }, [events.length]);
+
+  const SortIcon = ({ columnKey }: { columnKey: SortKey }) => {
+    if (sortKey !== columnKey) {
+      return <ArrowUpDown className="h-3.5 w-3.5 text-gray-400" />;
+    }
+    if (sortOrder === 'asc') {
+      return <ArrowUp className="h-3.5 w-3.5 text-black" />;
+    }
+    return <ArrowDown className="h-3.5 w-3.5 text-black" />;
+  };
 
   if (loading) {
     return (
@@ -68,31 +129,74 @@ export default function EventTable({ events, loading }: EventTableProps) {
 
   return (
     <div className="w-full border border-gray-200 rounded-lg overflow-hidden">
-      <Table>
+      <Table className="table-fixed">
         <TableHeader>
           <TableRow className="hover:bg-transparent bg-gray-50">
             <TableHead className="w-16 pl-6"></TableHead>
             <TableHead className="font-semibold text-gray-700">Event</TableHead>
-            <TableHead className="text-right font-semibold text-gray-700">Total Volume</TableHead>
-            <TableHead className="text-right font-semibold text-gray-700">24 Hour Volume</TableHead>
-            <TableHead className="text-right font-semibold text-gray-700">Liquidity</TableHead>
-            <TableHead className="text-right font-semibold text-gray-700 pr-6">End Date</TableHead>
+            
+            <TableHead className="text-right font-semibold text-gray-700">
+              <button
+                onClick={() => handleSort('totalVolume')}
+                className="inline-flex items-center gap-1.5 hover:text-black transition-colors ml-auto"
+              >
+                Total Volume
+                <SortIcon columnKey="totalVolume" />
+              </button>
+            </TableHead>
+            
+            <TableHead className="text-right font-semibold text-gray-700">
+              <button
+                onClick={() => handleSort('volume24hr')}
+                className="inline-flex items-center gap-1.5 hover:text-black transition-colors ml-auto"
+              >
+                24 Hour Volume
+                <SortIcon columnKey="volume24hr" />
+              </button>
+            </TableHead>
+            
+            <TableHead className="text-right font-semibold text-gray-700">
+              <button
+                onClick={() => handleSort('liquidity')}
+                className="inline-flex items-center gap-1.5 hover:text-black transition-colors ml-auto"
+              >
+                Liquidity
+                <SortIcon columnKey="liquidity" />
+              </button>
+            </TableHead>
+            
+            <TableHead className="text-right font-semibold text-gray-700 pr-6">
+              <button
+                onClick={() => handleSort('endDate')}
+                className="inline-flex items-center gap-1.5 hover:text-black transition-colors ml-auto"
+              >
+                End Date
+                <SortIcon columnKey="endDate" />
+              </button>
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {events.map((event) => (
+          {currentEvents.map((event) => (
             <TableRow 
               key={event.eventId} 
               className="hover:bg-gray-50 cursor-pointer transition-colors"
+              onClick={() => window.open(`https://polymarket.com/event/${event.slug}`, '_blank')}
             >
               <TableCell className="pl-6">
-                <img 
-                  src={event.image} 
-                  alt={event.title}
-                  className="rounded-md object-cover aspect-square"
-                  height={32}
-                  width={32}
-                />
+                {event.image ? (
+                  <img 
+                    src={event.image} 
+                    alt={event.title}
+                    className="rounded-md object-cover aspect-square"
+                    height={32}
+                    width={32}
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-md bg-gray-200 flex items-center justify-center">
+                    <span className="text-xs text-gray-400">?</span>
+                  </div>
+                )}
               </TableCell>
               <TableCell className="font-medium max-w-md">
                 <div className="truncate">{event.title}</div>
@@ -113,11 +217,14 @@ export default function EventTable({ events, loading }: EventTableProps) {
           ))}
         </TableBody>
       </Table>
-      <div className="px-6 py-3 border-t border-gray-200 bg-gray-50">
-        <p className="text-xs text-gray-500">
-          Last updated {events.fetchDate} • Showing {events.length} events
-        </p>
-      </div>
+      
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+        itemsPerPage={ITEMS_PER_PAGE}
+        totalItems={sortedEvents.length}
+      />
     </div>
   );
 }
