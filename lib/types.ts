@@ -41,12 +41,15 @@ export interface DbEvent {
 }
 
 export interface EventFilters {
-  totalVolume: string;
-  volume24hr: string;
-  volume1wk: string;
-  volume1mo: string;
-  volume1yr: string;
+  totalVolume: number;
+  volume24hr: number;
+  volume1wk: number;
+  volume1mo: number;
+  volume1yr: number;
+  liquidity: number;
   newEvents: boolean;
   featuredEvents: boolean;
+  endingSoon: boolean;
+  negRiskMarkets: boolean;
   search?: string;
 }

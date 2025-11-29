@@ -9,7 +9,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { PolymarketEvent } from "@/lib/types";
-import { format } from "path";
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('en-US', {
@@ -27,6 +26,15 @@ const formatPercentage = (value: number) => {
     maximumFractionDigits: 0,
   }).format(value);
 };
+
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
 
 interface EventTableProps {
   events: PolymarketEvent[];
@@ -67,7 +75,8 @@ export default function EventTable({ events, loading }: EventTableProps) {
             <TableHead className="font-semibold text-gray-700">Event</TableHead>
             <TableHead className="text-right font-semibold text-gray-700">Total Volume</TableHead>
             <TableHead className="text-right font-semibold text-gray-700">24 Hour Volume</TableHead>
-            <TableHead className="text-right font-semibold text-gray-700 pr-6">Liquidity</TableHead>
+            <TableHead className="text-right font-semibold text-gray-700">Liquidity</TableHead>
+            <TableHead className="text-right font-semibold text-gray-700 pr-6">End Date</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -94,8 +103,11 @@ export default function EventTable({ events, loading }: EventTableProps) {
               <TableCell className="text-right font-medium text-gray-900">
                 {formatCurrency(event.volume24hr)}
               </TableCell>
-              <TableCell className="text-right font-medium text-gray-900 pr-6">
+              <TableCell className="text-right font-medium text-gray-900">
                 {formatCurrency(event.liquidity)}
+              </TableCell>
+              <TableCell className="text-right font-medium text-gray-900 pr-6">
+                {formatDate(event.endDate)}
               </TableCell>
             </TableRow>
           ))}
@@ -103,7 +115,7 @@ export default function EventTable({ events, loading }: EventTableProps) {
       </Table>
       <div className="px-6 py-3 border-t border-gray-200 bg-gray-50">
         <p className="text-xs text-gray-500">
-          Last updated {date} • Showing {events.length} events
+          Last updated {events.fetchDate} • Showing {events.length} events
         </p>
       </div>
     </div>
