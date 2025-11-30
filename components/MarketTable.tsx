@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PolymarketEvent } from "@/lib/types";
+import { PolymarketMarket } from "@/lib/types";
 import { Pagination } from "@/components/ui/pagination";
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 
@@ -31,8 +31,8 @@ const formatDate = (dateString: string) => {
   });
 }
 
-interface EventTableProps {
-  events: PolymarketEvent[];
+interface MarketTableProps {
+  markets: PolymarketMarket[];
   loading: boolean;
 }
 
@@ -41,7 +41,7 @@ type SortOrder = 'asc' | 'desc' | null;
 
 const ITEMS_PER_PAGE = 50;
 
-export default function EventTable({ events, loading }: EventTableProps) {
+export default function MarketTable({ markets, loading }: MarketTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
   const [sortOrder, setSortOrder] = useState<SortOrder>(null);
@@ -63,11 +63,10 @@ export default function EventTable({ events, loading }: EventTableProps) {
     setCurrentPage(1); // Reset to first page when sorting
   };
 
-  // Sort events
-  const sortedEvents = useMemo(() => {
-    if (!sortKey || !sortOrder) return events;
+  const sortedMarkets = useMemo(() => {
+    if (!sortKey || !sortOrder) return markets;
 
-    return [...events].sort((a, b) => {
+    return [...markets].sort((a, b) => {
       let aValue: number | Date;
       let bValue: number | Date;
 
@@ -83,22 +82,21 @@ export default function EventTable({ events, loading }: EventTableProps) {
       if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
       return 0;
     });
-  }, [events, sortKey, sortOrder]);
+  }, [markets, sortKey, sortOrder]);
 
   // Calculate pagination
-  const totalPages = Math.ceil(sortedEvents.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(sortedMarkets.length / ITEMS_PER_PAGE);
   
   // Get current page items
-  const currentEvents = useMemo(() => {
+  const currentMarkets = useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
-    return sortedEvents.slice(startIndex, endIndex);
-  }, [sortedEvents, currentPage]);
-
-  // Reset to page 1 when events change (e.g., after filtering)
+    return sortedMarkets.slice(startIndex, endIndex);
+  }, [sortedMarkets, currentPage]);
+  // Reset to page 1 when markets change (e.g., after filtering)
   useMemo(() => {
     setCurrentPage(1);
-  }, [events.length]);
+  }, [markets.length]);
 
   const SortIcon = ({ columnKey }: { columnKey: SortKey }) => {
     if (sortKey !== columnKey) {
@@ -113,18 +111,19 @@ export default function EventTable({ events, loading }: EventTableProps) {
   if (loading) {
     return (
       <div className="w-full border border-gray-200 rounded-lg overflow-hidden p-8 text-center">
-        <p className="text-gray-500">Loading events...</p>
+        <p className="text-gray-500">Loading markets...</p>
       </div>
     );
   }
 
-  if (events.length === 0) {
+  if (markets.length === 0) {
     return (
       <div className="w-full border border-gray-200 rounded-lg overflow-hidden p-8 text-center">
-        <p className="text-gray-500">No events found. Try adjusting your filters.</p>
+        <p className="text-gray-500">No markets found. Try adjusting your filters.</p>
       </div>
     );
   }
+
 
   return (
     <div className="w-full border border-gray-200 rounded-lg overflow-hidden">
@@ -132,7 +131,7 @@ export default function EventTable({ events, loading }: EventTableProps) {
         <TableHeader>
           <TableRow className="hover:bg-transparent bg-gray-50">
             <TableHead className="w-16 pl-6"></TableHead>
-            <TableHead className="font-semibold text-gray-700">Event</TableHead>
+            <TableHead className="font-semibold text-gray-700">Market</TableHead>
             
             <TableHead className="text-right font-semibold text-gray-700">
               <button
@@ -176,17 +175,17 @@ export default function EventTable({ events, loading }: EventTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {currentEvents.map((event) => (
+          {currentMarkets.map((market) => (
             <TableRow 
-              key={event.eventId} 
+              key={market.marketId} 
               className="hover:bg-gray-50 cursor-pointer transition-colors"
-              onClick={() => window.open(`https://polymarket.com/event/${event.slug}`, '_blank')}
+              onClick={() => window.open(`https://polymarket.com/event/${market.slug}`, '_blank')}
             >
               <TableCell className="pl-6">
-                {event.image ? (
+                {market.image ? (
                   <img 
-                    src={event.image} 
-                    alt={event.title}
+                    src={market.image} 
+                    alt={market.title}
                     className="rounded-md object-cover aspect-square"
                     height={32}
                     width={32}
@@ -198,19 +197,19 @@ export default function EventTable({ events, loading }: EventTableProps) {
                 )}
               </TableCell>
               <TableCell className="font-medium max-w-md">
-                <div className="truncate">{event.title}</div>
+                <div className="truncate">{market.title}</div>
               </TableCell>
               <TableCell className="text-right font-medium text-gray-900">
-                {formatCurrency(event.totalVolume)}
+                {formatCurrency(market.totalVolume)}
               </TableCell>
               <TableCell className="text-right font-medium text-gray-900">
-                {formatCurrency(event.volume24hr)}
+                {formatCurrency(market.volume24hr)}
               </TableCell>
               <TableCell className="text-right font-medium text-gray-900">
-                {formatCurrency(event.liquidity)}
+                {formatCurrency(market.liquidity)}
               </TableCell>
               <TableCell className="text-right font-medium text-gray-900 pr-6">
-                {formatDate(event.endDate)}
+                {formatDate(market.endDate)}
               </TableCell>
             </TableRow>
           ))}
@@ -222,8 +221,8 @@ export default function EventTable({ events, loading }: EventTableProps) {
         totalPages={totalPages}
         onPageChange={setCurrentPage}
         itemsPerPage={ITEMS_PER_PAGE}
-        totalItems={sortedEvents.length}
+        totalItems={sortedMarkets.length}
       />
     </div>
-  );
+  )
 }
