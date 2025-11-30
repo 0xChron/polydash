@@ -6,6 +6,11 @@ import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
 import { Filter, TrendingUp, Clock, Calendar, Droplets } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 interface FilterState {
   totalVolume: [number, number];
@@ -41,6 +46,8 @@ const formatVolume = (value: number): string => {
 };
 
 const formatPrice = (value: number): string => {
+  if (value === 1) return "$1";
+  if (value === 0) return "$0";
   return `${(value * 100).toFixed(0)}¢`;
 };
 
@@ -318,9 +325,21 @@ export default function FilterPopover({ filters, onFilterChange, onClear, onAppl
                     : 'none',
                 }}
               />
-              <Label htmlFor="negRiskMarkets" className="text-sm font-medium cursor-pointer">
-                negrisk
-              </Label>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Label htmlFor="negRiskMarkets" className="text-sm font-medium cursor-pointer">
+                    winner-take-all 
+                  </Label>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-[200px] text-center">
+                    <p>
+                      {type == "events" 
+                        ? "events containing multiple markets, where only one can resolve as yes/true."
+                        : "markets that are part of an event where only one outcome can resolve as yes/true." 
+                      }
+                    </p>
+                  </TooltipContent>
+              </Tooltip>
             </div>
           </div>
 
