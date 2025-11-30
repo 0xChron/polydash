@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# [polydash](https://polydash.cc) 
 
-## Getting Started
+a simple, user-friendly polymarket analytics platform that gives you an edge in prediction markets. analyze events and markets with advanced filters and insights not available in the standard polymarket ui.
 
-First, run the development server:
+🔗 visit polydash → [polydash.cc](https://polydash.cc)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## why polydash?
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+get deeper insights into polymarket data with:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **advanced filtering** - screen markets by liquidity thresholds, volume ratios, and custom timeframes
+- **better sorting** - find opportunities the standard UI doesn't surface
+- **comprehensive analytics** - all the key metrics in one place
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## features
 
-## Learn More
+### 📊 events Tab
+browse and analyze polymarket events with detailed metrics:
+- total volume and liquidity
+- event end dates and timelines
+- featured events and winner-take-all markets
+- new events and markets ending soon
 
-To learn more about Next.js, take a look at the following resources:
+### 📈 markets Tab
+dive into individual market performance:
+- market volume and liquidity depth
+- resolution dates
+- market tags (new, ending soon, featured, winner-take-all)
+- price changes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 👥 traders Tab
+*coming soon* - track top traders, wallet analytics, and trading patterns
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### ⚡ advanced Filters
+**this is what sets polydash apart** - filter and sort by parameters hidden in the standard polymarket interface:
 
-## Deploy on Vercel
+- **liquidity thresholds** - Find markets with >$50k, >$100k, or custom liquidity levels
+- **volume-to-liquidity ratio** - Identify high-activity markets relative to their size
+- **combined metrics** - Multi-parameter filtering for precise market discovery
+- **sorting options** - Rank by any metric to surface the best opportunities
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## contact
+if there are any issues or questions, you can reach me out via:
+- X: [@polydash](https://x.com/polydash)
+- X: [@lakancrypto](https://x.com/lakancrypto)
