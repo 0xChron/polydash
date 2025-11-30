@@ -14,13 +14,12 @@ import { Pagination } from "@/components/ui/pagination";
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 
 const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(value);
+  if (value > 1_000_000_000) return `$${(value / 1_000_000_000).toFixed(2)}B`;
+  if (value > 1_000_000) return `$${(value / 1_000_000).toFixed(2)}M`;
+  if (value > 1_000) return `$${(value / 1_000).toFixed(2)}K`;
+  return `$${value.toFixed(2)}`;
 };
+
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);

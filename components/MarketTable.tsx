@@ -14,12 +14,10 @@ import { Pagination } from "@/components/ui/pagination";
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 
 const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(value);
+  if (value > 1_000_000_000) return `$${(value / 1_000_000_000).toFixed(2)}B`;
+  if (value > 1_000_000) return `$${(value / 1_000_000).toFixed(2)}M`;
+  if (value > 1_000) return `$${(value / 1_000).toFixed(2)}K`;
+  return `$${value.toFixed(2)}`;
 };
 
 const formatDate = (dateString: string) => {
@@ -31,12 +29,22 @@ const formatDate = (dateString: string) => {
   });
 }
 
+const formatPercentage = (value: number) => {
+  return `${(value * 100).toFixed(2)}%`;
+}
+
+const formatPrice = (value: number): string => {
+  if (value === 1) return "$1";
+  if (value === 0) return "$0";
+  return `${(value * 100).toFixed(2)}¢`;
+};
+
 interface MarketTableProps {
   markets: PolymarketMarket[];
   loading: boolean;
 }
 
-type SortKey = 'totalVolume' | 'volume24hr' | 'liquidity' | 'endDate';
+type SortKey = 'totalVolume' | 'volume24hr' | 'liquidity' | 'endDate' | 'outcomeYesPrice' | 'outcomeNoPrice' | 'oneDayPriceChange';
 type SortOrder = 'asc' | 'desc' | null;
 
 const ITEMS_PER_PAGE = 50;
@@ -131,45 +139,76 @@ export default function MarketTable({ markets, loading }: MarketTableProps) {
         <TableHeader>
           <TableRow className="hover:bg-transparent bg-gray-50">
             <TableHead className="w-16 pl-6"></TableHead>
-            <TableHead className="font-semibold text-gray-700">Market</TableHead>
+            <TableHead className="font-semibold text-gray-700 w-[35%]">Market</TableHead>
             
-            <TableHead className="text-right font-semibold text-gray-700">
+            <TableHead className="text-right font-semibold text-gray-700 w-[7%]">
+              <button
+                onClick={() => handleSort('outcomeYesPrice')}
+                className="inline-flex items-center gap-1.5 hover:text-black transition-colors ml-auto"
+              >
+                <SortIcon columnKey="outcomeYesPrice" />
+                Yes
+                
+              </button>
+            </TableHead>
+
+            <TableHead className="text-right font-semibold text-gray-700 w-[7%]">
+              <button
+                onClick={() => handleSort('outcomeNoPrice')}
+                className="inline-flex items-center gap-1.5 hover:text-black transition-colors ml-auto"
+              >
+                <SortIcon columnKey="outcomeNoPrice" />
+                No
+              </button>
+            </TableHead>
+
+            <TableHead className="text-right font-semibold text-gray-700 w-[9%]">
+              <button
+                onClick={() => handleSort('oneDayPriceChange')}
+                className="inline-flex items-center gap-1.5 hover:text-black transition-colors ml-auto"
+              >
+                <SortIcon columnKey="oneDayPriceChange" />
+                24h change
+              </button>
+            </TableHead>
+
+            <TableHead className="text-right font-semibold text-gray-700 w-[10%]">
               <button
                 onClick={() => handleSort('totalVolume')}
                 className="inline-flex items-center gap-1.5 hover:text-black transition-colors ml-auto"
               >
-                Total Volume
                 <SortIcon columnKey="totalVolume" />
+                Total Volume
               </button>
             </TableHead>
-            
-            <TableHead className="text-right font-semibold text-gray-700">
+
+            <TableHead className="text-right font-semibold text-gray-700 w-[10%]">
               <button
                 onClick={() => handleSort('volume24hr')}
                 className="inline-flex items-center gap-1.5 hover:text-black transition-colors ml-auto"
               >
-                24 Hour Volume
                 <SortIcon columnKey="volume24hr" />
+                24h Volume
               </button>
             </TableHead>
             
-            <TableHead className="text-right font-semibold text-gray-700">
+            <TableHead className="text-right font-semibold text-gray-700 w-[9%]">
               <button
                 onClick={() => handleSort('liquidity')}
                 className="inline-flex items-center gap-1.5 hover:text-black transition-colors ml-auto"
               >
-                Liquidity
                 <SortIcon columnKey="liquidity" />
+                Liquidity               
               </button>
             </TableHead>
             
-            <TableHead className="text-right font-semibold text-gray-700 pr-6">
+            <TableHead className="text-right font-semibold text-gray-700 w-[9%] pr-6">
               <button
                 onClick={() => handleSort('endDate')}
                 className="inline-flex items-center gap-1.5 hover:text-black transition-colors ml-auto"
               >
-                End Date
                 <SortIcon columnKey="endDate" />
+                End Date
               </button>
             </TableHead>
           </TableRow>
@@ -178,8 +217,8 @@ export default function MarketTable({ markets, loading }: MarketTableProps) {
           {currentMarkets.map((market) => (
             <TableRow 
               key={market.marketId} 
-              className="hover:bg-gray-50 cursor-pointer transition-colors"
-              onClick={() => window.open(`https://polymarket.com/event/${market.slug}`, '_blank')}
+              className="hover:bg-gray-50 cursor-pointer transition-colors h-15"
+              onClick={() => window.open(`https://polymarket.com/market/${market.slug}`, '_blank')}
             >
               <TableCell className="pl-6">
                 {market.image ? (
@@ -196,8 +235,17 @@ export default function MarketTable({ markets, loading }: MarketTableProps) {
                   </div>
                 )}
               </TableCell>
-              <TableCell className="font-medium max-w-md">
-                <div className="truncate">{market.title}</div>
+              <TableCell className="font-medium">
+                <div className="whitespace-normal leading-snug py-1">{market.title}</div>
+              </TableCell>
+              <TableCell className="text-right font-medium text-gray-900">
+                {formatPrice(market.outcomeYesPrice)}
+              </TableCell>
+              <TableCell className="text-right font-medium text-gray-900">
+                {formatPrice(market.outcomeNoPrice)}
+              </TableCell>
+              <TableCell className="text-right font-medium text-gray-900">
+                {formatPercentage(market.oneDayPriceChange)}
               </TableCell>
               <TableCell className="text-right font-medium text-gray-900">
                 {formatCurrency(market.totalVolume)}
