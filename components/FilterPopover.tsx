@@ -60,7 +60,7 @@ export default function FilterPopover({ filters, onFilterChange, onClear, onAppl
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="rounded-full px-6 gap-2 whitespace-nowrap">
+        <Button variant="outline" className="rounded-sm px-6 gap-2 whitespace-nowrap">
           <Filter className="h-4 w-4" />
           filter
         </Button>

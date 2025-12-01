@@ -18,7 +18,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Navbar />
 
       <div className="bg-white min-h-screen p-8">
         <div className="flex gap-4 mb-6">
