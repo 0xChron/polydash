@@ -8,44 +8,43 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import Image from "next/image";
+import { useRouter, usePathname } from "next/navigation";
 
-interface NavbarProps {
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
-}
+export default function Navbar() {
+  const router = useRouter();
+  const pathname = usePathname();
 
-export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
   return (
     <div className="flex items-center justify-between px-10 py-4 bg-white shadow-md">
       <div className="flex items-center gap-8">
         <div className="text-2xl font-medium text-black font-['Fredoka']">
-          polydash
+          <button
+            onClick={() => router.push("/")}
+          >
+            polydash
+          </button>
         </div>
 
-
-        <div className="flex">
+        <div className="flex gap-2">
           <Tooltip>
             <TooltipTrigger asChild>
               <button
-                onClick={() => setActiveTab("events")}
-                className="px-4 py-2 font-medium transition-colors text-black hover:text-black relative group"
+                onClick={() => router.push("/markets")}
+                className={`
+                  px-4 py-2 font-medium transition-all duration-200 
+                  text-black rounded-sm
+                  ${pathname === "/markets"
+                    ? "shadow-[inset_0_3px_6px_rgba(0.1,0.1,0.1,0.1)] translate-y-[2px] bg-gray-200" 
+                    : "hover:bg-gray-50 active:translate-y-[2px] active:bg-gray-200"
+                  }
+                `}
               >
-                <span className="relative">
-                  events
-                  <span 
-                    className={`absolute -bottom-1 left-1/2 h-0.5 bg-black transition-all duration-300 ${
-                      activeTab === "events"
-                        ? "w-full -translate-x-1/2"
-                        : "w-0 -translate-x-1/2 group-hover:w-full"
-                    }`}
-                  />
-                </span>
+                markets
               </button>
             </TooltipTrigger>
             <TooltipContent className="max-w-sm text-center">
               <p>
-                events are the overarching occurrences that host multiple markets. 
-                they represent the main topics or happenings being predicted.
+                all current active markets on polymarket.
               </p>
             </TooltipContent>
           </Tooltip>
@@ -53,32 +52,7 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
           <Tooltip>
             <TooltipTrigger asChild>
               <button
-                onClick={() => setActiveTab("markets")}
-                className="px-4 py-2 font-medium transition-colors text-black hover:text-black relative group"
-              >
-                <span className="relative">
-                  markets
-                  <span 
-                    className={`absolute -bottom-1 left-1/2 h-0.5 bg-black transition-all duration-300 ${
-                      activeTab === "markets"
-                        ? "w-full -translate-x-1/2"
-                        : "w-0 -translate-x-1/2 group-hover:w-full"
-                    }`}
-                  />
-                </span>
-              </button>
-            </TooltipTrigger>
-            <TooltipContent className="max-w-sm text-center">
-              <p>
-                markets are specific prediction questions within an event.
-              </p>
-            </TooltipContent>
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                className="px-4 py-2 font-medium transition-colors text-gray-500 hover:text-gray-500 relative group"
+                className="px-4 py-2 font-medium transition-all duration-200 text-gray-400 rounded-sm hover:bg-gray-50"
               >
                 traders
               </button>
@@ -92,9 +66,8 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
       </div>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button 
-            size="icon"
-            className="hover:cursor-pointer rounded-full" 
+          <button 
+            className="w-9 h-9 flex items-center justify-center rounded-sm bg-black"
             onClick={() => window.open("https://polymarket.com/?via=lakan", "_blank")}>
                 <Image 
                   src="icon-white.svg"
@@ -103,10 +76,10 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
                   height={32}
                   
                 />
-          </Button>
+          </button>
         </TooltipTrigger>
         <TooltipContent className="max-w-sm text-center">
-          <p>visit polymarket</p>
+          <p>visit polymarket!</p>
         </TooltipContent>
       </Tooltip>
 
