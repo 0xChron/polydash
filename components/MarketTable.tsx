@@ -39,6 +39,16 @@ const formatPrice = (value: number): string => {
   return `${(value * 100).toFixed(2)}¢`;
 };
 
+// Helper to get color classes for Yes price
+const getYesPriceColor = (price: number) => {
+  return 'text-green-700 bg-green-50';
+};
+
+// Helper to get color classes for No price
+const getNoPriceColor = (price: number) => {
+  return 'text-red-700 bg-red-50';
+};
+
 interface MarketTableProps {
   markets: PolymarketMarket[];
   loading: boolean;
@@ -101,6 +111,7 @@ export default function MarketTable({ markets, loading }: MarketTableProps) {
     const endIndex = startIndex + ITEMS_PER_PAGE;
     return sortedMarkets.slice(startIndex, endIndex);
   }, [sortedMarkets, currentPage]);
+  
   // Reset to page 1 when markets change (e.g., after filtering)
   useMemo(() => {
     setCurrentPage(1);
@@ -118,7 +129,7 @@ export default function MarketTable({ markets, loading }: MarketTableProps) {
 
   if (loading) {
     return (
-      <div className="w-full border border-gray-200 rounded-lg overflow-hidden p-8 text-center">
+      <div className="w-full bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden p-8 text-center">
         <p className="text-gray-500">Loading markets...</p>
       </div>
     );
@@ -126,18 +137,17 @@ export default function MarketTable({ markets, loading }: MarketTableProps) {
 
   if (markets.length === 0) {
     return (
-      <div className="w-full border border-gray-200 rounded-lg overflow-hidden p-8 text-center">
+      <div className="w-full bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden p-8 text-center">
         <p className="text-gray-500">No markets found. Try adjusting your filters.</p>
       </div>
     );
   }
 
-
   return (
-    <div className="w-full border border-gray-200 rounded-lg overflow-hidden">
+    <div className="w-full bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
       <Table className="table-fixed">
         <TableHeader>
-          <TableRow className="hover:bg-transparent bg-gray-50">
+          <TableRow className="hover:bg-transparent bg-gray-50 border-b border-gray-200">
             <TableHead className="w-16 pl-6"></TableHead>
             <TableHead className="font-semibold text-gray-700 w-[35%]">Market</TableHead>
             
@@ -146,9 +156,8 @@ export default function MarketTable({ markets, loading }: MarketTableProps) {
                 onClick={() => handleSort('outcomeYesPrice')}
                 className="inline-flex items-center gap-1.5 hover:text-black transition-colors ml-auto"
               >
-                <SortIcon columnKey="outcomeYesPrice" />
                 Yes
-                
+                <SortIcon columnKey="outcomeYesPrice" />
               </button>
             </TableHead>
 
@@ -157,8 +166,8 @@ export default function MarketTable({ markets, loading }: MarketTableProps) {
                 onClick={() => handleSort('outcomeNoPrice')}
                 className="inline-flex items-center gap-1.5 hover:text-black transition-colors ml-auto"
               >
-                <SortIcon columnKey="outcomeNoPrice" />
                 No
+                <SortIcon columnKey="outcomeNoPrice" />
               </button>
             </TableHead>
 
@@ -167,8 +176,8 @@ export default function MarketTable({ markets, loading }: MarketTableProps) {
                 onClick={() => handleSort('oneDayPriceChange')}
                 className="inline-flex items-center gap-1.5 hover:text-black transition-colors ml-auto"
               >
-                <SortIcon columnKey="oneDayPriceChange" />
                 24h change
+                <SortIcon columnKey="oneDayPriceChange" />
               </button>
             </TableHead>
 
@@ -177,8 +186,8 @@ export default function MarketTable({ markets, loading }: MarketTableProps) {
                 onClick={() => handleSort('totalVolume')}
                 className="inline-flex items-center gap-1.5 hover:text-black transition-colors ml-auto"
               >
-                <SortIcon columnKey="totalVolume" />
                 Total Volume
+                <SortIcon columnKey="totalVolume" />
               </button>
             </TableHead>
 
@@ -187,8 +196,8 @@ export default function MarketTable({ markets, loading }: MarketTableProps) {
                 onClick={() => handleSort('volume24hr')}
                 className="inline-flex items-center gap-1.5 hover:text-black transition-colors ml-auto"
               >
-                <SortIcon columnKey="volume24hr" />
                 24h Volume
+                <SortIcon columnKey="volume24hr" />
               </button>
             </TableHead>
             
@@ -197,8 +206,8 @@ export default function MarketTable({ markets, loading }: MarketTableProps) {
                 onClick={() => handleSort('liquidity')}
                 className="inline-flex items-center gap-1.5 hover:text-black transition-colors ml-auto"
               >
+                Liquidity
                 <SortIcon columnKey="liquidity" />
-                Liquidity               
               </button>
             </TableHead>
             
@@ -207,45 +216,55 @@ export default function MarketTable({ markets, loading }: MarketTableProps) {
                 onClick={() => handleSort('endDate')}
                 className="inline-flex items-center gap-1.5 hover:text-black transition-colors ml-auto"
               >
-                <SortIcon columnKey="endDate" />
                 End Date
+                <SortIcon columnKey="endDate" />
               </button>
             </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {currentMarkets.map((market) => (
+          {currentMarkets.map((market, index) => (
             <TableRow 
               key={market.marketId} 
-              className="hover:bg-gray-50 cursor-pointer transition-colors h-15"
+              className={`
+                cursor-pointer transition-all duration-200 h-20 border-b border-gray-100
+                hover:bg-blue-50/50 hover:shadow-md hover:scale-[1.01] hover:z-10
+                ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}
+              `}
               onClick={() => window.open(`https://polymarket.com/market/${market.slug}`, '_blank')}
             >
-              <TableCell className="pl-6">
+              <TableCell className="pl-6 rounded-l-lg">
                 {market.image ? (
                   <img 
                     src={market.image} 
                     alt={market.title}
-                    className="rounded-md object-cover aspect-square"
+                    className="rounded-lg object-cover aspect-square ring-2 ring-gray-200"
                     height={32}
                     width={32}
                   />
                 ) : (
-                  <div className="w-8 h-8 rounded-md bg-gray-200 flex items-center justify-center">
-                    <span className="text-xs text-gray-400">?</span>
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center ring-2 ring-gray-200">
+                    <span className="text-xs text-gray-500 font-semibold">?</span>
                   </div>
                 )}
               </TableCell>
               <TableCell className="font-medium">
-                <div className="whitespace-normal leading-snug py-1">{market.title}</div>
+                <div className="line-clamp-3 leading-snug">{market.title}</div>
               </TableCell>
-              <TableCell className="text-right font-medium text-gray-900">
-                {formatPrice(market.outcomeYesPrice)}
+              <TableCell className="text-right">
+                <span className={`inline-block px-2.5 py-1 rounded-full font-semibold text-sm ${getYesPriceColor(market.outcomeYesPrice)}`}>
+                  {formatPrice(market.outcomeYesPrice)}
+                </span>
               </TableCell>
-              <TableCell className="text-right font-medium text-gray-900">
-                {formatPrice(market.outcomeNoPrice)}
+              <TableCell className="text-right">
+                <span className={`inline-block px-2.5 py-1 rounded-full font-semibold text-sm ${getNoPriceColor(market.outcomeNoPrice)}`}>
+                  {formatPrice(market.outcomeNoPrice)}
+                </span>
               </TableCell>
-              <TableCell className="text-right font-medium text-gray-900">
-                {formatPercentage(market.oneDayPriceChange)}
+              <TableCell className="text-right font-semibold">
+                <span className={market.oneDayPriceChange >= 0 ? 'text-green-600' : 'text-red-600'}>
+                  {market.oneDayPriceChange >= 0 ? '↑' : '↓'} {formatPercentage(Math.abs(market.oneDayPriceChange))}
+                </span>
               </TableCell>
               <TableCell className="text-right font-medium text-gray-900">
                 {formatCurrency(market.totalVolume)}
@@ -256,7 +275,7 @@ export default function MarketTable({ markets, loading }: MarketTableProps) {
               <TableCell className="text-right font-medium text-gray-900">
                 {formatCurrency(market.liquidity)}
               </TableCell>
-              <TableCell className="text-right font-medium text-gray-900 pr-6">
+              <TableCell className="text-right font-medium text-gray-900 pr-6 rounded-r-lg">
                 {formatDate(market.endDate)}
               </TableCell>
             </TableRow>
