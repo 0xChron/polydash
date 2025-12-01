@@ -17,7 +17,7 @@ export default function SearchBar({ value, onChange, onSearch, placeholder = "se
       <Input 
         type="text"
         placeholder={placeholder}
-        className="rounded-full px-6 pl-12 w-full"
+        className="rounded-sm px-6 pl-12 w-full focus-visible:ring-0 focus-visible:ring-offset-0"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={(e) => e.key === 'Enter' && onSearch()}
