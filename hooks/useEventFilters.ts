@@ -7,6 +7,8 @@ interface FilterState {
   totalVolume: [number, number];
   volume24hr: [number, number];
   liquidity: [number, number];
+  yesPrice: [number, number];
+  noPrice: [number, number];
   newEvents: boolean;
   endingSoon: boolean;
 }
@@ -19,6 +21,8 @@ export function useEventFilters() {
     totalVolume: [0, 1000000000],
     volume24hr: [0, 10000000],
     liquidity: [0, 10000000],
+    yesPrice: [0, 1],
+    noPrice: [0, 1],
     newEvents: false,
     endingSoon: false,
   });
@@ -36,6 +40,12 @@ export function useEventFilters() {
       
       if (filters.liquidity[0] > 0) params.append('minLiquidity', filters.liquidity[0].toString());
       if (filters.liquidity[1] < 10000000) params.append('maxLiquidity', filters.liquidity[1].toString());
+      
+      if (filters.yesPrice[0] > 0) params.append('minYesPrice', filters.yesPrice[0].toString());
+      if (filters.yesPrice[1] < 1) params.append('maxYesPrice', filters.yesPrice[1].toString());
+      
+      if (filters.noPrice[0] > 0) params.append('minNoPrice', filters.noPrice[0].toString());
+      if (filters.noPrice[1] < 1) params.append('maxNoPrice', filters.noPrice[1].toString());
       
       if (filters.newEvents) params.append('new', 'true');
       if (filters.endingSoon) params.append('endingSoon', 'true');
@@ -67,6 +77,8 @@ export function useEventFilters() {
       totalVolume: [0, 1000000000],
       volume24hr: [0, 10000000],
       liquidity: [0, 10000000],
+      yesPrice: [0, 1],
+      noPrice: [0, 1],
       newEvents: false,
       endingSoon: false,
     });

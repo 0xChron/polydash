@@ -26,7 +26,7 @@ export default function MarketsPage() {
             onFilterChange={eventFilters.handleFilterChange}
             onClear={eventFilters.clearFilters}
             onApply={eventFilters.applyFilters}
-            type="events"
+            type="markets"
           />  
         </div>
 

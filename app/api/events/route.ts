@@ -60,6 +60,10 @@ export async function GET(request: NextRequest) {
     const maxVolume24hr = parseFloat(searchParams.get('maxVolume24hr') || 'Infinity');
     const minLiquidity = parseFloat(searchParams.get('minLiquidity') || '0');
     const maxLiquidity = parseFloat(searchParams.get('maxLiquidity') || 'Infinity');
+    const minYesPrice = parseFloat(searchParams.get('minYesPrice') || '0');
+    const maxYesPrice = parseFloat(searchParams.get('maxYesPrice') || '1');
+    const minNoPrice = parseFloat(searchParams.get('minNoPrice') || '0');
+    const maxNoPrice = parseFloat(searchParams.get('maxNoPrice') || '1');
     const newOnly = searchParams.get('new') === 'true';
     const endingSoon = searchParams.get('endingSoon') === 'true';
     const searchQuery = searchParams.get('search')?.toLowerCase() || '';
@@ -117,7 +121,16 @@ export async function GET(request: NextRequest) {
       if (event.liquidity < minLiquidity || event.liquidity > maxLiquidity) return false;
       if (newOnly && !event.new) return false;
       if (endingSoon && !isEndingSoon(event.endDate)) return false;
-      
+
+      // Filter markets by price
+      if (event.markets) {
+        event.markets = event.markets.filter(market => {
+          if (market.outcomeYesPrice < minYesPrice || market.outcomeYesPrice > maxYesPrice) return false;
+          if (market.outcomeNoPrice < minNoPrice || market.outcomeNoPrice > maxNoPrice) return false;
+          return true;
+        });
+      }
+
       // Search in both event title and market questions/groupItemTitle
       if (searchQuery) {
         const eventMatches = event.title.toLowerCase().includes(searchQuery);
@@ -136,6 +149,8 @@ export async function GET(request: NextRequest) {
           );
         }
       }
+
+      if (event.markets && event.markets.length === 0) return false;
 
       return true;
     });
