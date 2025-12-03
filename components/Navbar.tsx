@@ -1,115 +1,131 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip"
+} from "@/components/ui/tooltip";
 import Image from "next/image";
+import { useRouter, usePathname } from "next/navigation";
+import { Menu, X } from "lucide-react";
+import { useState } from "react";
 
-interface NavbarProps {
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
-}
+export default function Navbar() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
   return (
-    <div className="flex items-center justify-between px-10 py-4 bg-white shadow-md">
-      <div className="flex items-center gap-8">
-        <div className="text-2xl font-medium text-black font-['Fredoka']">
-          polydash
+    <>
+      <div className="flex items-center justify-between px-4 md:px-10 py-4 bg-white shadow-md">
+        <div className="flex items-center gap-4 md:gap-8">
+          <div className="text-xl md:text-2xl font-medium text-black font-['Fredoka']">
+            <button
+              onClick={() => router.push("/")}
+              className="hover:cursor-pointer"
+            >
+              polydash
+            </button>
+          </div>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex gap-2">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={() => router.push("/screener")}
+                  className={`
+                    px-4 py-2 font-medium transition-all duration-200 hover:cursor-pointer
+                    text-black rounded-sm
+                    ${pathname === "/screener"
+                      ? "shadow-[inset_0_3px_6px_rgba(0.1,0.1,0.1,0.1)] translate-y-0.5 bg-gray-200" 
+                      : "hover:bg-gray-50 active:translate-y-0.5 active:bg-gray-200"
+                    }
+                  `}
+                >
+                  screener
+                </button>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-sm text-center">
+                <p>
+                  all current active markets on polymarket.
+                </p>
+              </TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  className="px-4 py-2 font-medium transition-all duration-200 text-gray-400 rounded-sm hover:bg-gray-50"
+                >
+                  traders
+                </button>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-sm text-center">
+                coming soon!
+              </TooltipContent>
+            </Tooltip>
+          </div>
         </div>
 
-
-        <div className="flex">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                onClick={() => setActiveTab("events")}
-                className="px-4 py-2 font-medium transition-colors text-black hover:text-black relative group"
-              >
-                <span className="relative">
-                  events
-                  <span 
-                    className={`absolute -bottom-1 left-1/2 h-0.5 bg-black transition-all duration-300 ${
-                      activeTab === "events"
-                        ? "w-full -translate-x-1/2"
-                        : "w-0 -translate-x-1/2 group-hover:w-full"
-                    }`}
-                  />
-                </span>
-              </button>
-            </TooltipTrigger>
-            <TooltipContent className="max-w-sm text-center">
-              <p>
-                events are the overarching occurrences that host multiple markets. 
-                they represent the main topics or happenings being predicted.
-              </p>
-            </TooltipContent>
-          </Tooltip>
+        <div className="flex items-center gap-2">
+          {/* Mobile Menu Button */}
+          <button 
+            className="md:hidden p-2 hover:bg-gray-50 rounded-sm transition-all duration-200 active:bg-gray-200"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
 
           <Tooltip>
             <TooltipTrigger asChild>
-              <button
-                onClick={() => setActiveTab("markets")}
-                className="px-4 py-2 font-medium transition-colors text-black hover:text-black relative group"
-              >
-                <span className="relative">
-                  markets
-                  <span 
-                    className={`absolute -bottom-1 left-1/2 h-0.5 bg-black transition-all duration-300 ${
-                      activeTab === "markets"
-                        ? "w-full -translate-x-1/2"
-                        : "w-0 -translate-x-1/2 group-hover:w-full"
-                    }`}
-                  />
-                </span>
+              <button 
+                className="w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-sm bg-black hover:bg-gray-800 transition-all duration-200"
+                onClick={() => window.open("https://polymarket.com/?via=lakan", "_blank")}>
+                    <Image 
+                      src="icon-white.svg"
+                      alt="polymarket icon"
+                      width={24}
+                      height={24}
+                      className="md:w-8 md:h-8"
+                    />
               </button>
             </TooltipTrigger>
             <TooltipContent className="max-w-sm text-center">
-              <p>
-                markets are specific prediction questions within an event.
-              </p>
-            </TooltipContent>
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                className="px-4 py-2 font-medium transition-colors text-gray-500 hover:text-gray-500 relative group"
-              >
-                traders
-              </button>
-            </TooltipTrigger>
-            <TooltipContent className="max-w-sm text-center">
-              coming soon!
+              <p>visit polymarket</p>
             </TooltipContent>
           </Tooltip>
         </div>
-
       </div>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button 
-            size="icon"
-            className="hover:cursor-pointer rounded-full" 
-            onClick={() => window.open("https://polymarket.com/?via=lakan", "_blank")}>
-                <Image 
-                  src="icon-white.svg"
-                  alt="polymarket icon"
-                  width={32}
-                  height={32}
-                  
-                />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent className="max-w-sm text-center">
-          <p>visit polymarket</p>
-        </TooltipContent>
-      </Tooltip>
 
-    </div>
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="bg-white shadow-lg border-t border-gray-200 md:hidden">
+          <div className="flex flex-col p-4 gap-2">
+            <button
+              onClick={() => {
+                router.push("/screener");
+                setMobileMenuOpen(false);
+              }}
+              className={`
+                px-4 py-3 font-medium transition-all duration-200 text-left
+                text-black rounded-sm
+                ${pathname === "/screener"
+                  ? "bg-gray-200" 
+                  : "hover:bg-gray-50 active:bg-gray-200"
+                }
+              `}
+            >
+              screener
+            </button>
+            <button
+              className="px-4 py-3 font-medium transition-all duration-200 text-gray-400 rounded-sm hover:bg-gray-50 text-left"
+            >
+              traders <span className="text-xs">(coming soon)</span>
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

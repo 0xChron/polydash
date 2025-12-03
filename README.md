@@ -8,9 +8,9 @@ a simple, user-friendly polymarket analytics platform that gives you an edge in 
 
 get deeper insights into polymarket data with:
 
-- **advanced filtering** - screen markets by liquidity thresholds, volume ratios, and custom timeframes
-- **better sorting** - find opportunities the standard UI doesn't surface
-- **comprehensive analytics** - all the key metrics in one place
+- **advanced filtering**: screen markets by liquidity thresholds, volume ratios, and custom timeframes
+- **better sorting**: find opportunities the standard UI doesn't surface
+- **comprehensive analytics**: all the key metrics in one place
 
 ## features
 
@@ -34,13 +34,15 @@ dive into individual market performance:
 ### ⚡ advanced filters
 **this is what sets polydash apart** - filter and sort by parameters hidden in the standard polymarket interface:
 
-- **liquidity thresholds** - Find markets with >$50k, >$100k, or custom liquidity levels
-- **volume-to-liquidity ratio** - Identify high-activity markets relative to their size
-- **combined metrics** - Multi-parameter filtering for precise market discovery
-- **sorting options** - Rank by any metric to surface the best opportunities
+- **liquidity thresholds**: find markets with >$50k, >$100k, or custom liquidity levels
+- **volume-to-liquidity ratio**: identify high-activity markets relative to their size
+- **combined metrics**: multi-parameter filtering for precise market discovery
+- **sorting options**: rank by any metric to surface the best opportunities
 
+## disclaimer
+polydash is an independent analytics tool and is not affiliated with or endorsed by polymarket. all data is sourced from publicly available polymarket APIs. this tool is for informational purposes only and does not constitute financial advice.
 
 ## contact
-if there are any issues or questions, you can reach me out via:
-- X: [@polydash](https://x.com/polydash)
-- X: [@lakancrypto](https://x.com/lakancrypto)
+have questions or feedback? reach out:
+- X/Twitter: [@polydash](https://x.com/polydash)
+- Developer: [@lakancrypto](https://x.com/lakancrypto)

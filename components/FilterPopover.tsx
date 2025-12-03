@@ -1,16 +1,12 @@
-// components/FilterPopover.tsx
 "use client";
 
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
-import { Filter, TrendingUp, Clock, Calendar, Droplets } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
+import { Filter, TrendingUp, Clock, Calendar, Droplets, TrendingDown } from "lucide-react";
+import { useState } from "react";
 
 interface FilterState {
   totalVolume: [number, number];
@@ -53,19 +49,35 @@ const formatPrice = (value: number): string => {
 
 export default function FilterPopover({ filters, onFilterChange, onClear, onApply, type = 'events' }: FilterPopoverProps) {
   const isNew = type === 'events' ? filters.newEvents : filters.newMarkets;
-  const isFeatured = type === 'events' ? filters.featuredEvents : filters.featuredMarkets;
   const newKey = type === 'events' ? 'newEvents' : 'newMarkets';
-  const featuredKey = type === 'events' ? 'featuredEvents' : 'featuredMarkets';
+
+  // Local state for price inputs - initialize empty
+  const [yesPriceLow, setYesPriceLow] = useState('');
+  const [yesPriceHigh, setYesPriceHigh] = useState('');
+  const [noPriceLow, setNoPriceLow] = useState('');
+  const [noPriceHigh, setNoPriceHigh] = useState('');
+
+  const handleYesPriceChange = (low: string, high: string) => {
+    const lowValue = low === '' ? 0 : parseFloat(low);
+    const highValue = high === '' ? 1 : parseFloat(high) / 100;
+    onFilterChange("yesPrice", [lowValue / 100, highValue]);
+  };
+
+  const handleNoPriceChange = (low: string, high: string) => {
+    const lowValue = low === '' ? 0 : parseFloat(low);
+    const highValue = high === '' ? 1 : parseFloat(high) / 100;
+    onFilterChange("noPrice", [lowValue / 100, highValue]);
+  };
 
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="rounded-full px-6 gap-2 whitespace-nowrap">
+        <Button variant="outline" className="rounded-sm px-6 gap-2 whitespace-nowrap">
           <Filter className="h-4 w-4" />
           filter
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80" align="end">
+      <PopoverContent className="w-[calc(100vw-2rem)] sm:w-80 max-h-[80vh] overflow-y-auto" align="end">
         <div className="space-y-3">
           <div>
             <h4 className="font-semibold text-lg mb-1">filter {type}</h4>
@@ -77,7 +89,7 @@ export default function FilterPopover({ filters, onFilterChange, onClear, onAppl
             <div className="space-y-1.5">
               <div className="flex justify-between items-center">
                 <Label htmlFor="totalVolume" className="text-sm font-medium flex items-center gap-1.5">
-                  <TrendingUp className="h-3.5 w-3.5 text-gray-500" />
+                  <TrendingUp className="h-3.5 w-3.5" />
                   all time volume
                 </Label>
                 <span className="text-xs text-gray-500">
@@ -99,7 +111,7 @@ export default function FilterPopover({ filters, onFilterChange, onClear, onAppl
             <div className="space-y-1.5">
               <div className="flex justify-between items-center">
                 <Label htmlFor="volume24hr" className="text-sm font-medium flex items-center gap-1.5">
-                  <Clock className="h-3.5 w-3.5 text-gray-500" />
+                  <Clock className="h-3.5 w-3.5" />
                   24 hour volume
                 </Label>
                 <span className="text-xs text-gray-500">
@@ -117,81 +129,11 @@ export default function FilterPopover({ filters, onFilterChange, onClear, onAppl
               />
             </div>
 
-            {/* 1 Week Volume Slider - Only for Events */}
-            {type === 'events' && filters.volume1wk && (
-              <div className="space-y-1.5">
-                <div className="flex justify-between items-center">
-                  <Label htmlFor="volume1wk" className="text-sm font-medium flex items-center gap-1.5">
-                    <Calendar className="h-3.5 w-3.5 text-gray-500" />
-                    1 week volume
-                  </Label>
-                  <span className="text-xs text-gray-500">
-                    {formatVolume(filters.volume1wk[0])} - {formatVolume(filters.volume1wk[1])}
-                  </span>
-                </div>
-                <Slider
-                  id="volume1wk"
-                  min={0}
-                  max={50000000}
-                  step={5000}
-                  value={filters.volume1wk}
-                  onValueChange={(value) => onFilterChange("volume1wk", value as [number, number])}
-                  className="w-full"
-                />
-              </div>
-            )}
-
-            {/* 1 Month Volume Slider */}
-            <div className="space-y-1.5">
-              <div className="flex justify-between items-center">
-                <Label htmlFor="volume1mo" className="text-sm font-medium flex items-center gap-1.5">
-                  <Calendar className="h-3.5 w-3.5 text-gray-500" />
-                  1 month volume
-                </Label>
-                <span className="text-xs text-gray-500">
-                  {formatVolume(filters.volume1mo[0])} - {formatVolume(filters.volume1mo[1])}
-                </span>
-              </div>
-              <Slider
-                id="volume1mo"
-                min={0}
-                max={100000000}
-                step={10000}
-                value={filters.volume1mo}
-                onValueChange={(value) => onFilterChange("volume1mo", value as [number, number])}
-                className="w-full"
-              />
-            </div>
-
-            {/* 1 Year Volume Slider - Only for Events */}
-            {type === 'events' && filters.volume1yr && (
-              <div className="space-y-1.5">
-                <div className="flex justify-between items-center">
-                  <Label htmlFor="volume1yr" className="text-sm font-medium flex items-center gap-1.5">
-                    <Calendar className="h-3.5 w-3.5 text-gray-500" />
-                    1 year volume
-                  </Label>
-                  <span className="text-xs text-gray-500">
-                    {formatVolume(filters.volume1yr[0])} - {formatVolume(filters.volume1yr[1])}
-                  </span>
-                </div>
-                <Slider
-                  id="volume1yr"
-                  min={0}
-                  max={1000000000}
-                  step={50000}
-                  value={filters.volume1yr}
-                  onValueChange={(value) => onFilterChange("volume1yr", value as [number, number])}
-                  className="w-full"
-                />
-              </div>
-            )}
-
             {/* Liquidity Slider */}
             <div className="space-y-1.5">
               <div className="flex justify-between items-center">
                 <Label htmlFor="liquidity" className="text-sm font-medium flex items-center gap-1.5">
-                  <Droplets className="h-3.5 w-3.5 text-gray-500" />
+                  <Droplets className="h-3.5 w-3.5" />
                   liquidity
                 </Label>
                 <span className="text-xs text-gray-500">
@@ -209,49 +151,79 @@ export default function FilterPopover({ filters, onFilterChange, onClear, onAppl
               />
             </div>
 
-            {/* Yes Price Slider - Only for Markets */}
+            {/* Yes Price Input - Only for Markets */}
             {type === 'markets' && filters.yesPrice && (
               <div className="space-y-1.5">
-                <div className="flex justify-between items-center">
-                  <Label htmlFor="yesPrice" className="text-sm font-medium flex items-center gap-1.5">
-                    yes price
+                <div className="flex items-center gap-2">
+                  <Label className="text-sm font-medium flex items-center gap-1.5 w-28">
+                    <TrendingUp className="h-3.5 w-3.5 text-green-600" />
+                    yes price (¢)
                   </Label>
-                  <span className="text-xs text-gray-500">
-                    {formatPrice(filters.yesPrice[0])} - {formatPrice(filters.yesPrice[1])}
-                  </span>
+                  <div className="flex gap-2 flex-1">
+                    <Input
+                      type="number"
+                      placeholder="low"
+                      className="rounded-sm focus-visible:ring-0 focus-visible:ring-offset-0 flex-1"
+                      min={0}
+                      max={100}
+                      value={yesPriceLow}
+                      onChange={(e) => {
+                        setYesPriceLow(e.target.value);
+                        handleYesPriceChange(e.target.value, yesPriceHigh);
+                      }}
+                    />
+                    <Input
+                      type="number"
+                      placeholder="high"
+                      className="rounded-sm focus-visible:ring-0 focus-visible:ring-offset-0 flex-1"
+                      min={0}
+                      max={100}
+                      value={yesPriceHigh}
+                      onChange={(e) => {
+                        setYesPriceHigh(e.target.value);
+                        handleYesPriceChange(yesPriceLow, e.target.value);
+                      }}
+                    />
+                  </div>
                 </div>
-                <Slider
-                  id="yesPrice"
-                  min={0}
-                  max={1}
-                  step={0.01}
-                  value={filters.yesPrice}
-                  onValueChange={(value) => onFilterChange("yesPrice", value as [number, number])}
-                  className="w-full"
-                />
               </div>
             )}
 
-            {/* No Price Slider - Only for Markets */}
+            {/* No Price Input - Only for Markets */}
             {type === 'markets' && filters.noPrice && (
               <div className="space-y-1.5">
-                <div className="flex justify-between items-center">
-                  <Label htmlFor="noPrice" className="text-sm font-medium flex items-center gap-1.5">
-                    no price
+                <div className="flex items-center gap-2">
+                  <Label className="text-sm font-medium flex items-center gap-1.5 w-28">
+                    <TrendingDown className="h-3.5 w-3.5 text-red-600" />
+                    no price (¢)
                   </Label>
-                  <span className="text-xs text-gray-500">
-                    {formatPrice(filters.noPrice[0])} - {formatPrice(filters.noPrice[1])}
-                  </span>
+                  <div className="flex gap-2 flex-1">
+                    <Input
+                      type="number"
+                      placeholder="low"
+                      className="rounded-sm focus-visible:ring-0 focus-visible:ring-offset-0 flex-1"
+                      min={0}
+                      max={100}
+                      value={noPriceLow}
+                      onChange={(e) => {
+                        setNoPriceLow(e.target.value);
+                        handleNoPriceChange(e.target.value, noPriceHigh);
+                      }}
+                    />
+                    <Input
+                      type="number"
+                      placeholder="high"
+                      className="rounded-sm focus-visible:ring-0 focus-visible:ring-offset-0 flex-1"
+                      min={0}
+                      max={100}
+                      value={noPriceHigh}
+                      onChange={(e) => {
+                        setNoPriceHigh(e.target.value);
+                        handleNoPriceChange(noPriceLow, e.target.value);
+                      }}
+                    />
+                  </div>
                 </div>
-                <Slider
-                  id="noPrice"
-                  min={0}
-                  max={1}
-                  step={0.01}
-                  value={filters.noPrice}
-                  onValueChange={(value) => onFilterChange("noPrice", value as [number, number])}
-                  className="w-full"
-                />
               </div>
             )}
           </div>
@@ -272,25 +244,7 @@ export default function FilterPopover({ filters, onFilterChange, onClear, onAppl
                 }}
               />
               <Label htmlFor="new" className="text-sm font-medium cursor-pointer">
-                new
-              </Label>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="featured"
-                checked={isFeatured}
-                onChange={(e) => onFilterChange(featuredKey, e.target.checked)}
-                className="w-4 h-4 rounded-full border-gray-300 text-black focus:ring-black appearance-none checked:bg-black border-2 cursor-pointer"
-                style={{
-                  backgroundImage: isFeatured
-                    ? 'url("data:image/svg+xml,%3csvg viewBox=\'0 0 16 16\' fill=\'white\' xmlns=\'http://www.w3.org/2000/svg\'%3e%3cpath d=\'M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z\'/%3e%3c/svg%3e")'
-                    : 'none',
-                }}
-              />
-              <Label htmlFor="featured" className="text-sm font-medium cursor-pointer">
-                featured
+                new markets
               </Label>
             </div>
 
@@ -310,36 +264,6 @@ export default function FilterPopover({ filters, onFilterChange, onClear, onAppl
               <Label htmlFor="endingSoon" className="text-sm font-medium cursor-pointer">
                 ending soon
               </Label>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="negRiskMarkets"
-                checked={filters.negRiskMarkets}
-                onChange={(e) => onFilterChange("negRiskMarkets", e.target.checked)}
-                className="w-4 h-4 rounded-full border-gray-300 text-black focus:ring-black appearance-none checked:bg-black border-2 cursor-pointer"
-                style={{
-                  backgroundImage: filters.negRiskMarkets
-                    ? 'url("data:image/svg+xml,%3csvg viewBox=\'0 0 16 16\' fill=\'white\' xmlns=\'http://www.w3.org/2000/svg\'%3e%3cpath d=\'M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z\'/%3e%3c/svg%3e")'
-                    : 'none',
-                }}
-              />
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Label htmlFor="negRiskMarkets" className="text-sm font-medium cursor-pointer">
-                    winner-take-all 
-                  </Label>
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-[200px] text-center">
-                    <p>
-                      {type == "events" 
-                        ? "events containing multiple markets, where only one can resolve as yes/true."
-                        : "markets that are part of an event where only one outcome can resolve as yes/true." 
-                      }
-                    </p>
-                  </TooltipContent>
-              </Tooltip>
             </div>
           </div>
 

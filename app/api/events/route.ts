@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { getMockEvents } from '@/lib/mock/events';
-import { PolymarketEvent, DbEvent } from '@/lib/types';
+import { PolymarketEvent, PolymarketMarket, DbEvent, DbMarket } from '@/lib/types';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -12,41 +11,35 @@ function transformDbEvent(dbEvent: DbEvent): PolymarketEvent {
     eventId: dbEvent.event_id,
     slug: dbEvent.slug,
     title: dbEvent.title,
-    startDate: dbEvent.start_date,
+    description: dbEvent.description,
     endDate: dbEvent.end_date,
-    volume24hr: dbEvent.volume24hr,
-    volume1wk: dbEvent.volume1wk,
-    volume1mo: dbEvent.volume1mo,
-    volume1yr: dbEvent.volume1yr,
-    totalVolume: dbEvent.volume,
     image: dbEvent.image,
     new: dbEvent.new,
-    featured: dbEvent.featured,
     liquidity: dbEvent.liquidity,
-    negRisk: dbEvent.negrisk,
-    labels: dbEvent.labels,
-    slugs: dbEvent.slugs,
+    volume: dbEvent.volume,
+    volume24hr: dbEvent.volume24hr,
+    categories: dbEvent.categories,
     fetchDate: dbEvent.fetch_date,
   };
 }
 
-async function fetchPolymarketEvents(): Promise<PolymarketEvent[]> {
-  try {
-    const { data, error } = await supabase
-      .from('events')
-      .select('*')
-      .order('volume', { ascending: false });
-
-    if (error) {
-      console.error('Supabase error:', error);
-      return getMockEvents();
-    }
-
-    return (data || []).map(transformDbEvent);
-  } catch (error) {
-    console.error('Error fetching from Supabase:', error);
-    return getMockEvents();
-  }
+function transformDbMarket(dbMarket: DbMarket): PolymarketMarket {
+  return {
+    marketId: dbMarket.market_id,
+    eventId: dbMarket.event_id,
+    slug: dbMarket.slug,
+    question: dbMarket.question,
+    groupItemTitle: dbMarket.group_item_title,
+    new: dbMarket.new,
+    liquidity: dbMarket.liquidity,
+    volume: dbMarket.volume,
+    volume24hr: dbMarket.volume24hr,
+    outcomeYesPrice: dbMarket.outcome_yes_price,
+    outcomeNoPrice: dbMarket.outcome_no_price,
+    oneDayPriceChange: dbMarket.one_day_price_change,
+    image: dbMarket.image,
+    fetchDate: dbMarket.fetch_date,
+  };
 }
 
 function isEndingSoon(endDate: string): boolean {
@@ -56,52 +49,123 @@ function isEndingSoon(endDate: string): boolean {
   return daysUntilEnd >= 0 && daysUntilEnd <= 7;
 }
 
-
-
-
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    
+
     // Get filter parameters
     const minTotalVolume = parseFloat(searchParams.get('minTotalVolume') || '0');
     const maxTotalVolume = parseFloat(searchParams.get('maxTotalVolume') || 'Infinity');
     const minVolume24hr = parseFloat(searchParams.get('minVolume24hr') || '0');
     const maxVolume24hr = parseFloat(searchParams.get('maxVolume24hr') || 'Infinity');
-    const minVolume1wk = parseFloat(searchParams.get('minVolume1wk') || '0');
-    const maxVolume1wk = parseFloat(searchParams.get('maxVolume1wk') || 'Infinity');
-    const minVolume1mo = parseFloat(searchParams.get('minVolume1mo') || '0');
-    const maxVolume1mo = parseFloat(searchParams.get('maxVolume1mo') || 'Infinity');
-    const minVolume1yr = parseFloat(searchParams.get('minVolume1yr') || '0');
-    const maxVolume1yr = parseFloat(searchParams.get('maxVolume1yr') || 'Infinity');
     const minLiquidity = parseFloat(searchParams.get('minLiquidity') || '0');
     const maxLiquidity = parseFloat(searchParams.get('maxLiquidity') || 'Infinity');
-    const newOnly = searchParams.get('new') === 'true';
-    const featuredOnly = searchParams.get('featured') === 'true';
-    const endingSoonOnly = searchParams.get('endingSoon') === 'true';
-    const negRiskOnly = searchParams.get('negRisk') === 'true';
+    const minYesPrice = parseFloat(searchParams.get('minYesPrice') || '0');
+    const maxYesPrice = parseFloat(searchParams.get('maxYesPrice') || '1');
+    const minNoPrice = parseFloat(searchParams.get('minNoPrice') || '0');
+    const maxNoPrice = parseFloat(searchParams.get('maxNoPrice') || '1');
+    const newEventsOnly = searchParams.get('newEvents') === 'true';
+    const newMarketsOnly = searchParams.get('newMarkets') === 'true';
+    const endingSoon = searchParams.get('endingSoon') === 'true';
     const searchQuery = searchParams.get('search')?.toLowerCase() || '';
-    
+    const categories = searchParams.getAll('categories'); // Get all category params
+
     // Fetch events from Supabase
-    let events = await fetchPolymarketEvents();
-    
+    const { data: eventsData, error: eventsError } = await supabase
+      .from('events')
+      .select('*')
+      .order('volume', { ascending: false });
+
+    if (eventsError) {
+      console.error('Supabase error:', eventsError);
+      return NextResponse.json({
+        success: false,
+        message: 'Failed to fetch events',
+      }, { status: 500 });
+    }
+
+    // Fetch all markets from Supabase
+    const { data: marketsData, error: marketsError } = await supabase
+      .from('markets')
+      .select('*');
+
+    if (marketsError) {
+      console.error('Supabase error:', marketsError);
+      return NextResponse.json({
+        success: false,
+        message: 'Failed to fetch markets',
+      }, { status: 500 });
+    }
+
+    // Transform data
+    let events = (eventsData || []).map(transformDbEvent);
+    const markets = (marketsData || []).map(transformDbMarket);
+
+    // Group markets by event_id
+    const marketsByEvent = markets.reduce((acc, market) => {
+      if (!acc[market.eventId]) {
+        acc[market.eventId] = [];
+      }
+      acc[market.eventId].push(market);
+      return acc;
+    }, {} as Record<string, PolymarketMarket[]>);
+
+    // Attach markets to events
+    events = events.map(event => ({
+      ...event,
+      markets: marketsByEvent[event.eventId] || [],
+    }));
+
     // Apply filters
     events = events.filter(event => {
-      if (event.totalVolume < minTotalVolume || event.totalVolume > maxTotalVolume) return false;
+      if (event.volume < minTotalVolume || event.volume > maxTotalVolume) return false;
       if (event.volume24hr < minVolume24hr || event.volume24hr > maxVolume24hr) return false;
-      if (event.volume1wk < minVolume1wk || event.volume1wk > maxVolume1wk) return false;
-      if (event.volume1mo < minVolume1mo || event.volume1mo > maxVolume1mo) return false;
-      if (event.volume1yr < minVolume1yr || event.volume1yr > maxVolume1yr) return false;
       if (event.liquidity < minLiquidity || event.liquidity > maxLiquidity) return false;
-      if (newOnly && !event.new) return false;
-      if (featuredOnly && !event.featured) return false;
-      if (endingSoonOnly && !isEndingSoon(event.endDate)) return false;
-      if (negRiskOnly && !event.negRisk) return false;
-      if (searchQuery && !event.title.toLowerCase().includes(searchQuery)) return false;
-      
+      if (newEventsOnly && !event.new) return false;
+      if (endingSoon && !isEndingSoon(event.endDate)) return false;
+
+      // Filter by categories if any are selected
+      if (categories.length > 0) {
+        const hasMatchingCategory = categories.some(category => 
+          event.categories.includes(category)
+        );
+        if (!hasMatchingCategory) return false;
+      }
+
+      // Filter markets by price and new status
+      if (event.markets) {
+        event.markets = event.markets.filter(market => {
+          if (market.outcomeYesPrice < minYesPrice || market.outcomeYesPrice > maxYesPrice) return false;
+          if (market.outcomeNoPrice < minNoPrice || market.outcomeNoPrice > maxNoPrice) return false;
+          if (newMarketsOnly && !market.new) return false;
+          return true;
+        });
+      }
+
+      // Search in both event title and market questions/groupItemTitle
+      if (searchQuery) {
+        const eventMatches = event.title.toLowerCase().includes(searchQuery);
+        const marketMatches = event.markets?.some(market => 
+          market.question.toLowerCase().includes(searchQuery) ||
+          market.groupItemTitle.toLowerCase().includes(searchQuery)
+        );
+        
+        if (!eventMatches && !marketMatches) return false;
+        
+        // If only markets match, filter to show only matching markets
+        if (!eventMatches && marketMatches) {
+          event.markets = event.markets?.filter(market =>
+            market.question.toLowerCase().includes(searchQuery) ||
+            market.groupItemTitle.toLowerCase().includes(searchQuery)
+          );
+        }
+      }
+
+      if (event.markets && event.markets.length === 0) return false;
+
       return true;
     });
-    
+
     return NextResponse.json({
       success: true,
       count: events.length,
@@ -109,9 +173,9 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error in GET /api/events:', error);
-    return NextResponse.json({ 
-      success: false, 
-      message: 'Internal Server Error: Failed to fetch events' 
+    return NextResponse.json({
+      success: false,
+      message: 'Internal Server Error: Failed to fetch events',
     }, { status: 500 });
   }
 }
