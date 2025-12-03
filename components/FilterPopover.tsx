@@ -141,28 +141,6 @@ export default function FilterPopover({ filters, onFilterChange, onClear, onAppl
               </div>
             )}
 
-            {/* 1 Month Volume Slider */}
-            <div className="space-y-1.5">
-              <div className="flex justify-between items-center">
-                <Label htmlFor="volume1mo" className="text-sm font-medium flex items-center gap-1.5">
-                  <Calendar className="h-3.5 w-3.5 text-gray-500" />
-                  1 month volume
-                </Label>
-                <span className="text-xs text-gray-500">
-                  {formatVolume(filters.volume1mo[0])} - {formatVolume(filters.volume1mo[1])}
-                </span>
-              </div>
-              <Slider
-                id="volume1mo"
-                min={0}
-                max={100000000}
-                step={10000}
-                value={filters.volume1mo}
-                onValueChange={(value) => onFilterChange("volume1mo", value as [number, number])}
-                className="w-full"
-              />
-            </div>
-
             {/* 1 Year Volume Slider - Only for Events */}
             {type === 'events' && filters.volume1yr && (
               <div className="space-y-1.5">
@@ -310,36 +288,6 @@ export default function FilterPopover({ filters, onFilterChange, onClear, onAppl
               <Label htmlFor="endingSoon" className="text-sm font-medium cursor-pointer">
                 ending soon
               </Label>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="negRiskMarkets"
-                checked={filters.negRiskMarkets}
-                onChange={(e) => onFilterChange("negRiskMarkets", e.target.checked)}
-                className="w-4 h-4 rounded-full border-gray-300 text-black focus:ring-black appearance-none checked:bg-black border-2 cursor-pointer"
-                style={{
-                  backgroundImage: filters.negRiskMarkets
-                    ? 'url("data:image/svg+xml,%3csvg viewBox=\'0 0 16 16\' fill=\'white\' xmlns=\'http://www.w3.org/2000/svg\'%3e%3cpath d=\'M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z\'/%3e%3c/svg%3e")'
-                    : 'none',
-                }}
-              />
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Label htmlFor="negRiskMarkets" className="text-sm font-medium cursor-pointer">
-                    winner-take-all 
-                  </Label>
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-[200px] text-center">
-                    <p>
-                      {type == "events" 
-                        ? "events containing multiple markets, where only one can resolve as yes/true."
-                        : "markets that are part of an event where only one outcome can resolve as yes/true." 
-                      }
-                    </p>
-                  </TooltipContent>
-              </Tooltip>
             </div>
           </div>
 

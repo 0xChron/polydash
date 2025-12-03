@@ -14,6 +14,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 
 const formatCurrency = (value: number) => {
+  if (value === undefined || value === null || isNaN(value)) return '$0.00';
   if (value > 1_000_000_000) return `$${(value / 1_000_000_000).toFixed(2)}B`;
   if (value > 1_000_000) return `$${(value / 1_000_000).toFixed(2)}M`;
   if (value > 1_000) return `$${(value / 1_000).toFixed(2)}K`;

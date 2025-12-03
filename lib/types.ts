@@ -1,126 +1,73 @@
 export interface PolymarketEvent {
-  eventId: number;
+  eventId: string;
   slug: string;
   title: string;
-  startDate: string;
+  description: string;
   endDate: string;
-  volume24hr: number;
-  volume1wk: number;
-  volume1mo: number;
-  volume1yr: number;
-  totalVolume: number;
   image: string;
   new: boolean;
-  featured: boolean;
   liquidity: number;
-  negRisk: boolean;
-  labels: string[];
-  slugs: string[];
+  volume: number;
+  volume24hr: number;
+  categories: string[];
   fetchDate: string;
+  markets?: PolymarketMarket[]; // markets nested under event
 }
 
 export interface DbEvent {
-  event_id: number;
+  event_id: string;
   slug: string;
   title: string;
-  start_date: string;
+  description: string;
   end_date: string;
-  volume24hr: number;
-  volume1wk: number;
-  volume1mo: number;
-  volume1yr: number;
-  volume: number;
   image: string;
   new: boolean;
-  featured: boolean;
   liquidity: number;
-  negrisk: boolean;
-  labels: string[];
-  slugs: string[];
+  volume: number;
+  volume24hr: number;
+  categories: string[];
   fetch_date: string;
 }
 
-export interface EventFilters {
-  totalVolume: number;
-  volume24hr: number;
-  volume1wk: number;
-  volume1mo: number;
-  volume1yr: number;
-  liquidity: number;
-  newEvents: boolean;
-  featuredEvents: boolean;
-  endingSoon: boolean;
-  negRiskMarkets: boolean;
-  search?: string;
-}
-
-
 export interface PolymarketMarket {
-  marketId: number;
+  marketId: string;
+  eventId: string; // foreign key to event
   slug: string;
-  title: string;
-  endDate: string;
-  liquidity: number;
-  startDate: string;
-  image: string;
-  outcomeYes: string;
-  outcomeNo: string;
-  volume24hr: number;
-  volume1wk: number;
-  volume1mo: number;
-  volume1yr: number;
-  totalVolume: number;
+  question: string;
+  groupItemTitle: string;
   new: boolean;
-  featured: boolean;
-  negRisk: boolean;
+  liquidity: number;
+  volume: number;
+  volume24hr: number;
   outcomeYesPrice: number;
   outcomeNoPrice: number;
   oneDayPriceChange: number;
-  oneHourPriceChange: number;
-  oneWeekPriceChange: number;
-  oneMonthPriceChange: number;
-  lastTradePrice: number;
+  image: string;
   fetchDate: string;
 }
 
 export interface DbMarket {
-  market_id: number;
+  market_id: string;
+  event_id: string;
   slug: string;
-  title: string;
-  end_date: string;
-  liquidity: number;
-  start_date: string;
-  image: string;
-  outcome_yes: string;
-  outcome_no: string;
-  volume24hr: number;
-  volume1wk: number;
-  volume1mo: number;
-  volume1yr: number;
-  volume: number;
+  question: string;
+  group_item_title: string;
   new: boolean;
-  featured: boolean;
-  negrisk: boolean;
+  liquidity: number;
+  volume: number;
+  volume24hr: number;
   outcome_yes_price: number;
   outcome_no_price: number;
   one_day_price_change: number;
-  one_hour_price_change: number;
-  one_week_price_change: number;
-  one_month_price_change: number;
-  last_trade_price: number;
+  image: string;
   fetch_date: string;
 }
 
-export interface MarketFilters {
-  totalVolume: number;
-  volume24hr: number;
-  volume1mo: number;
-  liquidity: number;
-  outcomeYesPrice: number;
-  outcomeNoPrice: number;
-  newMarkets: boolean;
-  featuredMarkets: boolean;
+export interface EventFilters {
+  totalVolume: [number, number];
+  volume24hr: [number, number];
+  liquidity: [number, number];
+  newEvents: boolean;
   endingSoon: boolean;
-  negRiskMarkets: boolean;
   search?: string;
 }
