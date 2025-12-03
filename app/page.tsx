@@ -10,12 +10,9 @@ import { useEventFilters } from "@/hooks/useEventFilters";
 import { useMarketFilters } from "@/hooks/useMarketFilters";
 
 export default function Home() {
-  const eventFilters = useEventFilters();
-  const marketFilters = useMarketFilters();
-  
   return (
     <div className="min-h-screen bg-gray-100">
-      test
+      <Navbar />
     </div>
   );
 }

@@ -217,7 +217,17 @@ export default function EventMarketTable({ events, loading }: EventMarketTablePr
                 >
                   <TableCell className="pl-4">
                     {hasMarkets && (
-                      <button className="p-1 hover:bg-gray-200 rounded transition-colors">
+                      <button 
+                        className={`p-1 hover:bg-gray-200 rounded-sm transition-all duration-200 active:shadow-[inset_0_3px_6px_rgba(0,0,0,0.2)] active:translate-y-[2px] active:bg-gray-200 ${
+                          isExpanded 
+                            ? "shadow-[inset_0_3px_6px_rgba(0.1,0.1,0.1,0.1)] translate-y-[2px] bg-gray-200" 
+                            : ""
+                        }`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleEvent(event.eventId);
+                        }}
+                      >
                         {isExpanded ? (
                           <ChevronDown className="h-4 w-4" />
                         ) : (

@@ -18,6 +18,7 @@ export default function Navbar() {
         <div className="text-2xl font-medium text-black font-['Fredoka']">
           <button
             onClick={() => router.push("/")}
+            className="hover:cursor-pointer"
           >
             polydash
           </button>
@@ -27,13 +28,36 @@ export default function Navbar() {
           <Tooltip>
             <TooltipTrigger asChild>
               <button
+                onClick={() => router.push("/screener")}
+                className={`
+                  px-4 py-2 font-medium transition-all duration-200 hover:cursor-pointer
+                  text-black rounded-sm
+                  ${pathname === "/screener"
+                    ? "shadow-[inset_0_3px_6px_rgba(0.1,0.1,0.1,0.1)] translate-y-0.5 bg-gray-200" 
+                    : "hover:bg-gray-50 active:translate-y-0.5 active:bg-gray-200"
+                  }
+                `}
+              >
+                screener
+              </button>
+            </TooltipTrigger>
+            <TooltipContent className="max-w-sm text-center">
+              <p>
+                all current active markets on polymarket.
+              </p>
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
                 onClick={() => router.push("/markets")}
                 className={`
-                  px-4 py-2 font-medium transition-all duration-200 
+                  px-4 py-2 font-medium transition-all duration-200 hover:cursor-pointer
                   text-black rounded-sm
                   ${pathname === "/markets"
-                    ? "shadow-[inset_0_3px_6px_rgba(0.1,0.1,0.1,0.1)] translate-y-[2px] bg-gray-200" 
-                    : "hover:bg-gray-50 active:translate-y-[2px] active:bg-gray-200"
+                    ? "shadow-[inset_0_3px_6px_rgba(0.1,0.1,0.1,0.1)] translate-y-0.5 bg-gray-200" 
+                    : "hover:bg-gray-50 active:translate-y-0.5 active:bg-gray-200"
                   }
                 `}
               >
@@ -42,7 +66,7 @@ export default function Navbar() {
             </TooltipTrigger>
             <TooltipContent className="max-w-sm text-center">
               <p>
-                all current active markets on polymarket.
+                check the latest dashboard on market trends.
               </p>
             </TooltipContent>
           </Tooltip>
