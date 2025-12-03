@@ -51,10 +51,11 @@ const calculateVLR = (volume: number, liquidity: number): number => {
 };
 
 const getVLRColorClass = (vlr: number): string => {
-  if (vlr < 10) return 'bg-green-50 text-green-700';
-  if (vlr < 50) return 'bg-yellow-50 text-yellow-700';
-  if (vlr < 150) return 'bg-orange-50 text-orange-700';
-  return 'bg-red-50 text-red-700';
+  if (vlr === 0) return 'bg-red-50 text-red-700';
+  if (vlr < 0.1) return 'bg-orange-50 text-orange-700';
+  if (vlr < 3) return 'bg-yellow-50 text-yellow-700';
+  if (vlr < 20) return 'bg-green-50 text-green-700';
+  return 'bg-orange-50 text-orange-700';
 };
 
 interface EventMarketTableProps {
@@ -100,8 +101,8 @@ export default function EventMarketTable({ events, loading }: EventMarketTablePr
         aValue = new Date(a[sortKey]);
         bValue = new Date(b[sortKey]);
       } else if (sortKey === 'volumeToLiquidityRatio') {
-        aValue = calculateVLR(a.volume, a.liquidity);
-        bValue = calculateVLR(b.volume, b.liquidity);
+        aValue = calculateVLR(a.volume24hr, a.liquidity);
+        bValue = calculateVLR(b.volume24hr, b.liquidity);
       } else {
         aValue = a[sortKey];
         bValue = b[sortKey];
@@ -213,7 +214,7 @@ export default function EventMarketTable({ events, loading }: EventMarketTablePr
                 onClick={() => handleSort('volumeToLiquidityRatio')}
                 className="inline-flex items-center gap-0.5 md:gap-1 hover:text-black transition-colors ml-auto text-xs md:text-sm whitespace-nowrap"
               >
-                vlr
+                v/r
                 <SortIcon columnKey="volumeToLiquidityRatio" />
               </button>
             </TableHead>
@@ -233,7 +234,7 @@ export default function EventMarketTable({ events, loading }: EventMarketTablePr
             {currentEvents.map((event) => {
               const isExpanded = expandedEvents.has(event.eventId);
               const hasMarkets = event.markets && event.markets.length > 0;
-              const eventVLR = calculateVLR(event.volume, event.liquidity);
+              const eventVLR = calculateVLR(event.volume24hr, event.liquidity);
 
               return (
                 <React.Fragment key={event.eventId}>
@@ -324,7 +325,7 @@ export default function EventMarketTable({ events, loading }: EventMarketTablePr
 
                   {/* Market Rows (shown when expanded) */}
                   {isExpanded && event.markets && event.markets.map((market) => {
-                    const marketVLR = calculateVLR(market.volume, market.liquidity);
+                    const marketVLR = calculateVLR(market.volume24hr, market.liquidity);
                     
                     return (
                       <TableRow 
