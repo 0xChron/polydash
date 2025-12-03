@@ -271,13 +271,13 @@ export default function EventMarketTable({ events, loading }: EventMarketTablePr
                   <TableCell className="text-right font-medium">
                     {formatCurrency(event.volume)}
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-right font-medium">
                     {formatCurrency(event.volume24hr)}
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-right font-medium">
                     {formatCurrency(event.liquidity)}
                   </TableCell>
-                  <TableCell className="text-right text-gray-600 pr-6">
+                  <TableCell className="text-right font-medium pr-6">
                     {formatDate(event.endDate)}
                   </TableCell>
                 </TableRow>
