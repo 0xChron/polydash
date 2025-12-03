@@ -89,7 +89,7 @@ export default function FilterPopover({ filters, onFilterChange, onClear, onAppl
             <div className="space-y-1.5">
               <div className="flex justify-between items-center">
                 <Label htmlFor="totalVolume" className="text-sm font-medium flex items-center gap-1.5">
-                  <TrendingUp className="h-3.5 w-3.5 text-gray-500" />
+                  <TrendingUp className="h-3.5 w-3.5" />
                   all time volume
                 </Label>
                 <span className="text-xs text-gray-500">
@@ -111,7 +111,7 @@ export default function FilterPopover({ filters, onFilterChange, onClear, onAppl
             <div className="space-y-1.5">
               <div className="flex justify-between items-center">
                 <Label htmlFor="volume24hr" className="text-sm font-medium flex items-center gap-1.5">
-                  <Clock className="h-3.5 w-3.5 text-gray-500" />
+                  <Clock className="h-3.5 w-3.5" />
                   24 hour volume
                 </Label>
                 <span className="text-xs text-gray-500">
@@ -129,59 +129,11 @@ export default function FilterPopover({ filters, onFilterChange, onClear, onAppl
               />
             </div>
 
-            {/* 1 Week Volume Slider - Only for Events */}
-            {type === 'events' && filters.volume1wk && (
-              <div className="space-y-1.5">
-                <div className="flex justify-between items-center">
-                  <Label htmlFor="volume1wk" className="text-sm font-medium flex items-center gap-1.5">
-                    <Calendar className="h-3.5 w-3.5 text-gray-500" />
-                    1 week volume
-                  </Label>
-                  <span className="text-xs text-gray-500">
-                    {formatVolume(filters.volume1wk[0])} - {formatVolume(filters.volume1wk[1])}
-                  </span>
-                </div>
-                <Slider
-                  id="volume1wk"
-                  min={0}
-                  max={50000000}
-                  step={5000}
-                  value={filters.volume1wk}
-                  onValueChange={(value) => onFilterChange("volume1wk", value as [number, number])}
-                  className="w-full"
-                />
-              </div>
-            )}
-
-            {/* 1 Year Volume Slider - Only for Events */}
-            {type === 'events' && filters.volume1yr && (
-              <div className="space-y-1.5">
-                <div className="flex justify-between items-center">
-                  <Label htmlFor="volume1yr" className="text-sm font-medium flex items-center gap-1.5">
-                    <Calendar className="h-3.5 w-3.5 text-gray-500" />
-                    1 year volume
-                  </Label>
-                  <span className="text-xs text-gray-500">
-                    {formatVolume(filters.volume1yr[0])} - {formatVolume(filters.volume1yr[1])}
-                  </span>
-                </div>
-                <Slider
-                  id="volume1yr"
-                  min={0}
-                  max={1000000000}
-                  step={50000}
-                  value={filters.volume1yr}
-                  onValueChange={(value) => onFilterChange("volume1yr", value as [number, number])}
-                  className="w-full"
-                />
-              </div>
-            )}
-
             {/* Liquidity Slider */}
             <div className="space-y-1.5">
               <div className="flex justify-between items-center">
                 <Label htmlFor="liquidity" className="text-sm font-medium flex items-center gap-1.5">
-                  <Droplets className="h-3.5 w-3.5 text-gray-500" />
+                  <Droplets className="h-3.5 w-3.5" />
                   liquidity
                 </Label>
                 <span className="text-xs text-gray-500">
@@ -292,7 +244,7 @@ export default function FilterPopover({ filters, onFilterChange, onClear, onAppl
                 }}
               />
               <Label htmlFor="new" className="text-sm font-medium cursor-pointer">
-                new
+                new markets
               </Label>
             </div>
 

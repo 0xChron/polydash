@@ -9,7 +9,7 @@ interface FilterState {
   liquidity: [number, number];
   yesPrice: [number, number];
   noPrice: [number, number];
-  newEvents: boolean;
+  newMarkets: boolean; 
   endingSoon: boolean;
 }
 
@@ -23,7 +23,7 @@ export function useEventFilters() {
     liquidity: [0, 10000000],
     yesPrice: [0, 1],
     noPrice: [0, 1],
-    newEvents: false,
+    newMarkets: false,
     endingSoon: false,
   });
 
@@ -47,7 +47,7 @@ export function useEventFilters() {
       if (filters.noPrice[0] > 0) params.append('minNoPrice', filters.noPrice[0].toString());
       if (filters.noPrice[1] < 1) params.append('maxNoPrice', filters.noPrice[1].toString());
       
-      if (filters.newEvents) params.append('new', 'true');
+      if (filters.newMarkets) params.append('newMarkets', 'true');
       if (filters.endingSoon) params.append('endingSoon', 'true');
       if (searchQuery) params.append('search', searchQuery);
 
@@ -79,7 +79,7 @@ export function useEventFilters() {
       liquidity: [0, 10000000],
       yesPrice: [0, 1],
       noPrice: [0, 1],
-      newEvents: false,
+      newMarkets: false,
       endingSoon: false,
     });
   };

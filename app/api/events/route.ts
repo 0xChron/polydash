@@ -64,7 +64,8 @@ export async function GET(request: NextRequest) {
     const maxYesPrice = parseFloat(searchParams.get('maxYesPrice') || '1');
     const minNoPrice = parseFloat(searchParams.get('minNoPrice') || '0');
     const maxNoPrice = parseFloat(searchParams.get('maxNoPrice') || '1');
-    const newOnly = searchParams.get('new') === 'true';
+    const newEventsOnly = searchParams.get('newEvents') === 'true';
+    const newMarketsOnly = searchParams.get('newMarkets') === 'true';
     const endingSoon = searchParams.get('endingSoon') === 'true';
     const searchQuery = searchParams.get('search')?.toLowerCase() || '';
 
@@ -119,14 +120,15 @@ export async function GET(request: NextRequest) {
       if (event.volume < minTotalVolume || event.volume > maxTotalVolume) return false;
       if (event.volume24hr < minVolume24hr || event.volume24hr > maxVolume24hr) return false;
       if (event.liquidity < minLiquidity || event.liquidity > maxLiquidity) return false;
-      if (newOnly && !event.new) return false;
+      if (newEventsOnly && !event.new) return false;
       if (endingSoon && !isEndingSoon(event.endDate)) return false;
 
-      // Filter markets by price
+      // Filter markets by price and new status
       if (event.markets) {
         event.markets = event.markets.filter(market => {
           if (market.outcomeYesPrice < minYesPrice || market.outcomeYesPrice > maxYesPrice) return false;
           if (market.outcomeNoPrice < minNoPrice || market.outcomeNoPrice > maxNoPrice) return false;
+          if (newMarketsOnly && !market.new) return false;
           return true;
         });
       }
