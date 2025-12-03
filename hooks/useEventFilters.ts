@@ -17,6 +17,7 @@ export function useEventFilters() {
   const [events, setEvents] = useState<PolymarketEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [filters, setFilters] = useState<FilterState>({
     totalVolume: [0, 1000000000],
     volume24hr: [0, 10000000],
@@ -50,6 +51,13 @@ export function useEventFilters() {
       if (filters.newMarkets) params.append('newMarkets', 'true');
       if (filters.endingSoon) params.append('endingSoon', 'true');
       if (searchQuery) params.append('search', searchQuery);
+      
+      // Add categories to query params
+      if (selectedCategories.length > 0) {
+        selectedCategories.forEach(category => {
+          params.append('categories', category);
+        });
+      }
 
       const response = await fetch(`/api/events?${params.toString()}`);
       const data = await response.json();
@@ -68,8 +76,25 @@ export function useEventFilters() {
     fetchEvents();
   }, []);
 
+  // Auto-fetch when categories change
+  useEffect(() => {
+    fetchEvents();
+  }, [selectedCategories]);
+
   const handleFilterChange = (key: string, value: [number, number] | boolean) => {
     setFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleCategoryToggle = (category: string) => {
+    setSelectedCategories(prev => {
+      // If clicking the same category, deselect it
+      if (prev.includes(category)) {
+        return [];
+      } else {
+        // Otherwise, select only this category (single selection)
+        return [category];
+      }
+    });
   };
 
   const clearFilters = () => {
@@ -82,6 +107,7 @@ export function useEventFilters() {
       newMarkets: false,
       endingSoon: false,
     });
+    setSelectedCategories([]);
   };
 
   const applyFilters = () => {
@@ -95,6 +121,8 @@ export function useEventFilters() {
     setSearchQuery,
     filters,
     handleFilterChange,
+    selectedCategories,
+    handleCategoryToggle,
     clearFilters,
     applyFilters,
   };

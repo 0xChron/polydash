@@ -68,6 +68,7 @@ export async function GET(request: NextRequest) {
     const newMarketsOnly = searchParams.get('newMarkets') === 'true';
     const endingSoon = searchParams.get('endingSoon') === 'true';
     const searchQuery = searchParams.get('search')?.toLowerCase() || '';
+    const categories = searchParams.getAll('categories'); // Get all category params
 
     // Fetch events from Supabase
     const { data: eventsData, error: eventsError } = await supabase
@@ -122,6 +123,14 @@ export async function GET(request: NextRequest) {
       if (event.liquidity < minLiquidity || event.liquidity > maxLiquidity) return false;
       if (newEventsOnly && !event.new) return false;
       if (endingSoon && !isEndingSoon(event.endDate)) return false;
+
+      // Filter by categories if any are selected
+      if (categories.length > 0) {
+        const hasMatchingCategory = categories.some(category => 
+          event.categories.includes(category)
+        );
+        if (!hasMatchingCategory) return false;
+      }
 
       // Filter markets by price and new status
       if (event.markets) {
