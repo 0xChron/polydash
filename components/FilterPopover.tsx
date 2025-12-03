@@ -77,7 +77,7 @@ export default function FilterPopover({ filters, onFilterChange, onClear, onAppl
           filter
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80" align="end">
+      <PopoverContent className="w-[calc(100vw-2rem)] sm:w-80 max-h-[80vh] overflow-y-auto" align="end">
         <div className="space-y-3">
           <div>
             <h4 className="font-semibold text-lg mb-1">filter {type}</h4>

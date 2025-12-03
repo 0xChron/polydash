@@ -124,233 +124,239 @@ export default function EventMarketTable({ events, loading }: EventMarketTablePr
 
   const SortIcon = ({ columnKey }: { columnKey: SortKey }) => {
     if (sortKey !== columnKey) {
-      return <ArrowUpDown className="h-3.5 w-3.5 text-gray-400" />;
+      return <ArrowUpDown className="h-2.5 w-2.5 md:h-3.5 md:w-3.5 text-gray-400" />;
     }
     if (sortOrder === 'asc') {
-      return <ArrowUp className="h-3.5 w-3.5 text-black" />;
+      return <ArrowUp className="h-2.5 w-2.5 md:h-3.5 md:w-3.5 text-black" />;
     }
-    return <ArrowDown className="h-3.5 w-3.5 text-black" />;
+    return <ArrowDown className="h-2.5 w-2.5 md:h-3.5 md:w-3.5 text-black" />;
   };
 
   if (loading) {
     return (
-      <div className="w-full bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden p-8 text-center">
-        <p className="text-gray-500">loading markets...</p>
+      <div className="w-full bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden p-4 md:p-8 text-center">
+        <p className="text-gray-500 text-sm md:text-base">loading markets...</p>
       </div>
     );
   }
 
   if (events.length === 0) {
     return (
-      <div className="w-full bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden p-8 text-center">
-        <p className="text-gray-500">no markets found. try adjusting your filters.</p>
+      <div className="w-full bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden p-4 md:p-8 text-center">
+        <p className="text-gray-500 text-sm md:text-base">no markets found. try adjusting your filters.</p>
       </div>
     );
   }
 
   return (
     <div className="w-full bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden">
-      <Table className="table-fixed">
-      <TableHeader>
-        <TableRow className="hover:bg-transparent bg-gray-50 border-b border-gray-200">
-          <TableHead className="w-12"></TableHead>
-          <TableHead className="w-16"></TableHead>
-          <TableHead className="font-semibold text-gray-700 w-[40%]">market</TableHead>
-          
-          {/* Market-specific columns - only shown when expanded */}
-          <TableHead className="text-center font-semibold text-gray-700 w-[6%]">yes</TableHead>
-          <TableHead className="text-center font-semibold text-gray-700 w-[6%]">no</TableHead>
-          <TableHead className="text-center font-semibold text-gray-700 w-[7%]">24h Δ</TableHead>
+      <div className="overflow-x-auto">
+        <Table className="table-fixed min-w-[600px] md:min-w-[800px]">
+        <TableHeader>
+          <TableRow className="hover:bg-transparent bg-gray-50 border-b border-gray-200">
+            <TableHead className="w-8 md:w-12"></TableHead>
+            <TableHead className="w-10 md:w-16"></TableHead>
+            <TableHead className="font-semibold text-gray-700 w-[25%] md:w-[30%] text-xs md:text-sm">market</TableHead>
+            
+            {/* Market-specific columns - only shown when expanded */}
+            <TableHead className="text-center font-semibold text-gray-700 w-[8%] md:w-[6%] text-xs md:text-sm">yes</TableHead>
+            <TableHead className="text-center font-semibold text-gray-700 w-[8%] md:w-[6%] text-xs md:text-sm">no</TableHead>
+            <TableHead className="text-center font-semibold text-gray-700 w-[9%] md:w-[7%] text-xs md:text-sm">24h Δ</TableHead>
 
-          <TableHead className="text-right font-semibold text-gray-700 w-[9%]">
-            <button
-              onClick={() => handleSort('volume')}
-              className="inline-flex items-center gap-1.5 hover:text-black transition-colors ml-auto"
-            >
-              total vol
-              <SortIcon columnKey="volume" />
-            </button>
-          </TableHead>
+            <TableHead className="text-right font-semibold text-gray-700 w-[12%] md:w-[9%] text-xs md:text-sm">
+              <button
+                onClick={() => handleSort('volume')}
+                className="inline-flex items-center gap-0.5 md:gap-1 hover:text-black transition-colors ml-auto text-xs md:text-sm whitespace-nowrap"
+              >
+                vol
+                <SortIcon columnKey="volume" />
+              </button>
+            </TableHead>
 
-          <TableHead className="text-right font-semibold text-gray-700 w-[8%]">
-            <button
-              onClick={() => handleSort('volume24hr')}
-              className="inline-flex items-center gap-1.5 hover:text-black transition-colors ml-auto"
-            >
-              24h vol
-              <SortIcon columnKey="volume24hr" />
-            </button>
-          </TableHead>
+            <TableHead className="text-right font-semibold text-gray-700 w-[12%] md:w-[9%] text-xs md:text-sm">
+              <button
+                onClick={() => handleSort('volume24hr')}
+                className="inline-flex items-center gap-0.5 md:gap-1 hover:text-black transition-colors ml-auto text-xs md:text-sm whitespace-nowrap"
+              >
+                24h
+                <SortIcon columnKey="volume24hr" />
+              </button>
+            </TableHead>
 
-          <TableHead className="text-right font-semibold text-gray-700 w-[8%]">
-            <button
-              onClick={() => handleSort('liquidity')}
-              className="inline-flex items-center gap-1.5 hover:text-black transition-colors ml-auto"
-            >
-              liquidity
-              <SortIcon columnKey="liquidity" />
-            </button>
-          </TableHead>
+            <TableHead className="text-right font-semibold text-gray-700 w-[12%] md:w-[9%] text-xs md:text-sm">
+              <button
+                onClick={() => handleSort('liquidity')}
+                className="inline-flex items-center gap-0.5 md:gap-1 hover:text-black transition-colors ml-auto text-xs md:text-sm whitespace-nowrap"
+              >
+                liq
+                <SortIcon columnKey="liquidity" />
+              </button>
+            </TableHead>
 
-          <TableHead className="text-right font-semibold text-gray-700 w-[8%] pr-6">
-            <button
-              onClick={() => handleSort('endDate')}
-              className="inline-flex items-center gap-1.5 hover:text-black transition-colors ml-auto"
-            >
-              end date
-              <SortIcon columnKey="endDate" />
-            </button>
-          </TableHead>
-        </TableRow>
-      </TableHeader>
-        <TableBody>
-          {currentEvents.map((event) => {
-            const isExpanded = expandedEvents.has(event.eventId);
-            const hasMarkets = event.markets && event.markets.length > 0;
+            <TableHead className="text-right font-semibold text-gray-700 w-[12%] md:w-[9%] pr-2 md:pr-6 text-xs md:text-sm">
+              <button
+                onClick={() => handleSort('endDate')}
+                className="inline-flex items-center gap-0.5 md:gap-1 hover:text-black transition-colors ml-auto text-xs md:text-sm whitespace-nowrap"
+              >
+                end
+                <SortIcon columnKey="endDate" />
+              </button>
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+          <TableBody>
+            {currentEvents.map((event) => {
+              const isExpanded = expandedEvents.has(event.eventId);
+              const hasMarkets = event.markets && event.markets.length > 0;
 
-            return (
-              <React.Fragment key={event.eventId}>
-                {/* Event Row */}
-                <TableRow 
-                  className="border-b hover:bg-gray-50 cursor-pointer"
-                  onClick={() => hasMarkets && toggleEvent(event.eventId)}
-                >
-                  <TableCell className="pl-4">
-                    {hasMarkets && (
-                      <button 
-                        className={`p-1 hover:bg-gray-200 rounded-sm transition-all duration-200 active:shadow-[inset_0_3px_6px_rgba(0,0,0,0.2)] active:translate-y-[2px] active:bg-gray-200 ${
-                          isExpanded 
-                            ? "shadow-[inset_0_3px_6px_rgba(0.1,0.1,0.1,0.1)] translate-y-[2px] bg-gray-200" 
-                            : ""
-                        }`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleEvent(event.eventId);
-                        }}
-                      >
-                        {isExpanded ? (
-                          <ChevronDown className="h-4 w-4" />
-                        ) : (
-                          <ChevronRight className="h-4 w-4" />
-                        )}
-                      </button>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <Image
-                      src={event.image}
-                      alt={event.title}
-                      width={40}
-                      height={40}
-                      className="rounded object-cover aspect-square"
-                    />
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    <div className="flex flex-col gap-1">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <span>{event.title}</span>
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-xl text-center">
-                          <p>{event.description}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                      {event.new && (
-                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded w-fit">
-                          NEW
-                        </span>
-                      )}
-                    </div>
-                  </TableCell>
-                  
-                  {/* Empty cells for market columns */}
-                  <TableCell></TableCell>
-                  <TableCell></TableCell>
-                  <TableCell></TableCell>
-
-                  <TableCell className="text-right font-medium">
-                    {formatCurrency(event.volume)}
-                  </TableCell>
-                  <TableCell className="text-right font-medium">
-                    {formatCurrency(event.volume24hr)}
-                  </TableCell>
-                  <TableCell className="text-right font-medium">
-                    {formatCurrency(event.liquidity)}
-                  </TableCell>
-                  <TableCell className="text-right font-medium pr-6">
-                    {formatDate(event.endDate)}
-                  </TableCell>
-                </TableRow>
-
-                {/* Market Rows (shown when expanded) */}
-                {isExpanded && event.markets && event.markets.map((market) => (
+              return (
+                <React.Fragment key={event.eventId}>
+                  {/* Event Row */}
                   <TableRow 
-                    key={market.marketId}
-                    className="border-b hover:bg-blue-50/30 bg-gray-50/50"
+                    className="border-b hover:bg-gray-50 cursor-pointer"
+                    onClick={() => hasMarkets && toggleEvent(event.eventId)}
                   >
-                    <TableCell></TableCell>
-                    <TableCell>
-                      <Image
-                        src={market.image}
-                        alt={market.question}
-                        width={32}
-                        height={32}
-                        className="rounded object-cover aspect-square"
-                      >
-                      </Image>
+                    <TableCell className="pl-2 md:pl-4">
+                      {hasMarkets && (
+                        <button 
+                          className={`p-0.5 md:p-1 hover:bg-gray-200 rounded-sm transition-all duration-200 active:shadow-[inset_0_3px_6px_rgba(0,0,0,0.2)] active:translate-y-[2px] active:bg-gray-200 ${
+                            isExpanded 
+                              ? "shadow-[inset_0_3px_6px_rgba(0.1,0.1,0.1,0.1)] translate-y-[2px] bg-gray-200" 
+                              : ""
+                          }`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleEvent(event.eventId);
+                          }}
+                        >
+                          {isExpanded ? (
+                            <ChevronDown className="h-3 w-3 md:h-4 md:w-4" />
+                          ) : (
+                            <ChevronRight className="h-3 w-3 md:h-4 md:w-4" />
+                          )}
+                        </button>
+                      )}
                     </TableCell>
-                    <TableCell className="pl-8">
-                      <div className="flex flex-col gap-1">
-                        <span className="text-sm">{market.groupItemTitle}</span>
-                        {market.groupItemTitle && (
-                          <span className="text-xs text-gray-500">{market.groupItemTitle}</span>
+                    <TableCell className="py-2 md:py-3">
+                      <Image
+                        src={event.image}
+                        alt={event.title}
+                        width={28}
+                        height={28}
+                        className="rounded object-cover aspect-square md:w-10 md:h-10"
+                      />
+                    </TableCell>  
+                    <TableCell className="font-medium text-xs md:text-sm py-2 md:py-3">
+                      <div className="flex flex-col gap-0.5 md:gap-1">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                window.open(`https://polymarket.com/event/${event.slug}`, '_blank');
+                              }}
+                              className="line-clamp-2 text-left hover:underline"
+                            >
+                              {event.title}
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-xl text-center">
+                            <p>{event.description}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                        {event.new && (
+                          <span className="text-[10px] md:text-xs bg-blue-100 text-blue-700 px-1.5 md:px-2 py-0.5 rounded w-fit">
+                            NEW
+                          </span>
                         )}
                       </div>
                     </TableCell>
                     
-                    {/* Market-specific data */}
-                    <TableCell className="text-center">
-                      <span className="inline-block px-2 py-1 rounded text-xs font-medium bg-green-50 text-green-700">
-                        {formatPrice(market.outcomeYesPrice)}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <span className="inline-block px-2 py-1 rounded text-xs font-medium bg-red-50 text-red-700">
-                        {formatPrice(market.outcomeNoPrice)}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                        market.oneDayPriceChange >= 0 
-                          ? 'bg-green-50 text-green-700' 
-                          : 'bg-red-50 text-red-700'
-                      }`}>
-                        {formatPercentage(market.oneDayPriceChange)}
-                      </span>
-                    </TableCell>
+                    {/* Empty cells for market columns */}
+                    <TableCell></TableCell>
+                    <TableCell></TableCell>
+                    <TableCell></TableCell>
 
-                    <TableCell className="text-right text-sm">
-                      {formatCurrency(market.volume)}
+                    <TableCell className="text-right font-medium text-xs md:text-sm py-2 md:py-3">
+                      {formatCurrency(event.volume)}
                     </TableCell>
-                    <TableCell className="text-right text-sm">
-                      {formatCurrency(market.volume24hr)}
+                    <TableCell className="text-right font-medium text-xs md:text-sm py-2 md:py-3">
+                      {formatCurrency(event.volume24hr)}
                     </TableCell>
-                    <TableCell className="text-right text-sm">
-                      {formatCurrency(market.liquidity)}
+                    <TableCell className="text-right font-medium text-xs md:text-sm py-2 md:py-3">
+                      {formatCurrency(event.liquidity)}
                     </TableCell>
-                    <TableCell className="text-right pr-6">
+                    <TableCell className="text-right font-medium text-xs md:text-sm pr-2 md:pr-6 py-2 md:py-3">
                       {formatDate(event.endDate)}
                     </TableCell>
                   </TableRow>
-                ))}
-              </React.Fragment>
-            );
-          })}
-        </TableBody>
-      </Table>
+
+                  {/* Market Rows (shown when expanded) */}
+                  {isExpanded && event.markets && event.markets.map((market) => (
+                    <TableRow 
+                      key={market.marketId}
+                      className="border-b hover:bg-blue-50/30 bg-gray-50/50"
+                    >
+                      <TableCell></TableCell>
+                      <TableCell className="py-2 md:py-3">
+                        <Image
+                          src={market.image}
+                          alt={market.question}
+                          width={24}
+                          height={24}
+                          className="rounded object-cover aspect-square md:w-8 md:h-8"
+                        />
+                      </TableCell>
+                      <TableCell className="pl-4 md:pl-8 py-2 md:py-3">
+                        <div className="flex flex-col gap-0.5">
+                          <span className="text-[11px] md:text-sm line-clamp-2">{market.groupItemTitle}</span>
+                        </div>
+                      </TableCell>
+                      
+                      {/* Market-specific data */}
+                      <TableCell className="text-center py-2 md:py-3">
+                        <span className="inline-block px-1 md:px-2 py-0.5 md:py-1 rounded text-[10px] md:text-xs font-medium bg-green-50 text-green-700">
+                          {formatPrice(market.outcomeYesPrice)}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-center py-2 md:py-3">
+                        <span className="inline-block px-1 md:px-2 py-0.5 md:py-1 rounded text-[10px] md:text-xs font-medium bg-red-50 text-red-700">
+                          {formatPrice(market.outcomeNoPrice)}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-center py-2 md:py-3">
+                        <span className={`inline-block px-1 md:px-2 py-0.5 md:py-1 rounded text-[10px] md:text-xs font-medium ${
+                          market.oneDayPriceChange >= 0 
+                            ? 'bg-green-50 text-green-700' 
+                            : 'bg-red-50 text-red-700'
+                        }`}>
+                          {formatPercentage(market.oneDayPriceChange)}
+                        </span>
+                      </TableCell>
+
+                      <TableCell className="text-right text-[11px] md:text-sm py-2 md:py-3">
+                        {formatCurrency(market.volume)}
+                      </TableCell>
+                      <TableCell className="text-right text-[11px] md:text-sm py-2 md:py-3">
+                        {formatCurrency(market.volume24hr)}
+                      </TableCell>
+                      <TableCell className="text-right text-[11px] md:text-sm py-2 md:py-3">
+                        {formatCurrency(market.liquidity)}
+                      </TableCell>
+                      <TableCell className="text-right text-[11px] md:text-sm pr-2 md:pr-6 py-2 md:py-3">
+                        {formatDate(event.endDate)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </React.Fragment>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </div>
 
       {totalPages > 1 && (
-        <div className="p-4 border-t border-gray-200">
+        <div className="p-2 md:p-4 border-t border-gray-200">
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}

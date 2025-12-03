@@ -13,8 +13,8 @@ export default function MarketsPage() {
     <div className="min-h-screen bg-gray-100">
       <Navbar />
 
-      <div className="bg-white min-h-screen p-8">
-        <div className="flex gap-4 mb-6">
+      <div className="bg-white min-h-screen p-4 md:p-8">
+        <div className="flex flex-col sm:flex-row gap-2 md:gap-4 mb-4 md:mb-6">
           <SearchBar
             value={eventFilters.searchQuery}
             onChange={eventFilters.setSearchQuery}
