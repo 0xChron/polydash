@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import SearchBar from "@/components/SearchBar";
 import FilterPopover from "@/components/FilterPopover";
@@ -9,6 +10,14 @@ import { useEventFilters } from "@/hooks/useEventFilters";
 
 export default function MarketsPage() {
   const eventFilters = useEventFilters();
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Extract fetchDate from first event when events are loaded
+    if (eventFilters.events.length > 0 && eventFilters.events[0].fetchDate) {
+      setLastUpdated(eventFilters.events[0].fetchDate);
+    }
+  }, [eventFilters.events]);
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -37,6 +46,14 @@ export default function MarketsPage() {
             onCategoryToggle={eventFilters.handleCategoryToggle}
           />
         </div>
+
+        {lastUpdated && !eventFilters.loading && (
+          <div className="mb-4">
+            <p className="text-sm text-gray-500">
+              data last updated: {new Date(lastUpdated).toLocaleString()}
+            </p>
+          </div>
+        )}
 
         <EventMarketTable events={eventFilters.events} loading={eventFilters.loading} />
       </div>

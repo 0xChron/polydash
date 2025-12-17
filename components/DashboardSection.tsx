@@ -113,9 +113,9 @@ export default function DashboardSection({
           </div>
           <Link 
             href={viewAllLink}
-            className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1 transition-colors"
+            className="text-sm text-black hover:text-gray-500 flex items-center gap-1 transition-colors"
           >
-            view all
+            details
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>

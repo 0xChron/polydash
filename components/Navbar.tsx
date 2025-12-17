@@ -33,6 +33,29 @@ export default function Navbar() {
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
+                  onClick={() => router.push("/")}
+                  className={`
+                    px-4 py-2 font-medium transition-all duration-200 hover:cursor-pointer
+                    text-black rounded-sm
+                    ${pathname === "/"
+                      ? "shadow-[inset_0_3px_6px_rgba(0.1,0.1,0.1,0.1)] translate-y-0.5 bg-gray-200" 
+                      : "hover:bg-gray-50 active:translate-y-0.5 active:bg-gray-200"
+                    }
+                  `}
+                >
+                  dashboard
+                </button>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-sm text-center">
+                <p>
+                  check daily insights and top market trends today!
+                </p>
+              </TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
                   onClick={() => router.push("/screener")}
                   className={`
                     px-4 py-2 font-medium transition-all duration-200 hover:cursor-pointer

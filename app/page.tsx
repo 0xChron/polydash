@@ -7,6 +7,7 @@ import { PolymarketEvent, PolymarketMarket } from "@/lib/types";
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [hotMarkets, setHotMarkets] = useState<PolymarketEvent[]>([]);
   const [topLiquidity, setTopLiquidity] = useState<PolymarketEvent[]>([]);
   const [topGainers, setTopGainers] = useState<PolymarketMarket[]>([]);
@@ -34,6 +35,11 @@ export default function Home() {
         } else {
           console.error('Unexpected API response format:', result);
           return;
+        }
+        
+        // Get fetchDate from first item (same for all)
+        if (data.length > 0 && data[0].fetchDate) {
+          setLastUpdated(data[0].fetchDate);
         }
         
         console.log('Processed data:', data.length, 'events'); // Debug log
@@ -169,61 +175,71 @@ export default function Home() {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <DashboardSection
-              title="🔥 hot markets"
-              items={hotMarkets}
-              type="event"
-              metricType="volume24hr"
-              description="top markets by 24 hour volume"
-              viewAllLink="/screener?sort=volume24hr"
-            />
+          <>
+            {lastUpdated && (
+              <div className="mb-4">
+                <p className="text-sm text-gray-500">
+                  data last updated: {new Date(lastUpdated).toLocaleString()}
+                </p>
+              </div>
+            )}
             
-            <DashboardSection
-              title="💰 top liquidity"
-              items={topLiquidity}
-              type="event"
-              metricType="liquidity"
-              description="top markets by liquidity"
-              viewAllLink="/screener?sort=liquidity"
-            />
-            
-            <DashboardSection
-              title="📈 top gainers"
-              items={topGainers}
-              type="market"
-              metricType="priceChange"
-              description="highest +% price change"
-              viewAllLink="/screener?filter=gainers"
-            />
-            
-            <DashboardSection
-              title="📉 top losers"
-              items={topLosers}
-              type="market"
-              metricType="priceChange"
-              description="highest -% price change"
-              viewAllLink="/screener?filter=losers"
-            />
-            
-            <DashboardSection
-              title="⚖️ controversial markets"
-              items={controversial}
-              type="market"
-              metricType="controversy"
-              description="markets with close disagreement"
-              viewAllLink="/screener?filter=controversial"
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <DashboardSection
+                title="🔥 hot markets"
+                items={hotMarkets}
+                type="event"
+                metricType="volume24hr"
+                description="top markets by 24 hour volume"
+                viewAllLink="/screener?sort=volume24hr"
+              />
+              
+              <DashboardSection
+                title="💰 top liquidity"
+                items={topLiquidity}
+                type="event"
+                metricType="liquidity"
+                description="top markets by liquidity"
+                viewAllLink="/screener?sort=liquidity"
+              />
+              
+              <DashboardSection
+                title="📈 top gainers"
+                items={topGainers}
+                type="market"
+                metricType="priceChange"
+                description="highest +% price change"
+                viewAllLink="/screener?filter=gainers"
+              />
+              
+              <DashboardSection
+                title="📉 top losers"
+                items={topLosers}
+                type="market"
+                metricType="priceChange"
+                description="highest -% price change"
+                viewAllLink="/screener?filter=losers"
+              />
+              
+              <DashboardSection
+                title="⚖️ controversial markets"
+                items={controversial}
+                type="market"
+                metricType="controversy"
+                description="markets with close disagreement"
+                viewAllLink="/screener?filter=controversial"
+              />
 
-            <DashboardSection
-              title="💎 most confident bets"
-              items={confidentBets}
-              type="market"
-              metricType="confidentBets"
-              description="markets with the most confident bets"
-              viewAllLink="/screener?filter=confident"
-            />
-          </div>
+              <DashboardSection
+                title="💎 most confident bets"
+                items={confidentBets}
+                type="market"
+                metricType="confidentBets"
+                description="markets with the most confident bets"
+                viewAllLink="/screener?filter=confident"
+              />
+            </div>
+          </>
         )}
       </div>
     </div>
