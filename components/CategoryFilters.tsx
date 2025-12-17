@@ -35,7 +35,7 @@ export default function CategoryFilters({ selectedCategories, onCategoryToggle }
               px-3 py-1.5 text-xs md:text-sm rounded-sm transition-all duration-200 font-medium
               ${isSelected 
                 ? 'bg-gray-200 shadow-[inset_0_3px_6px_rgba(0.1,0.1,0.1,0.1)] translate-y-[2px] hover:bg-gray-200 text-black' 
-                : 'bg-white text-black hover:bg-gray-50 active:shadow-[inset_0_3px_6px_rgba(0,0,0,0.2)] active:translate-y-[2px] active:bg-gray-200 border-0'
+                : 'bg-white text-black hover:bg-gray-200 active:shadow-[inset_0_3px_6px_rgba(0,0,0,0.2)] active:translate-y-[2px] active:bg-gray-200 border-0'
               }
             `}
           >

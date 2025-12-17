@@ -268,10 +268,10 @@ export default function FilterPopover({ filters, onFilterChange, onClear, onAppl
           </div>
 
           <div className="flex gap-2 pt-3 border-t">
-            <Button variant="outline" className="flex-1 rounded-full" onClick={onClear}>
+            <Button variant="outline" className="flex-1 rounded-sm" onClick={onClear}>
               clear
             </Button>
-            <Button className="flex-1 rounded-full" onClick={onApply}>
+            <Button className="flex-1 rounded-sm" onClick={onApply}>
               apply filters
             </Button>
           </div>
