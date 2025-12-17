@@ -140,96 +140,97 @@ export default function EventMarketTable({ events, loading }: EventMarketTablePr
 
   const SortIcon = ({ columnKey }: { columnKey: SortKey }) => {
     if (sortKey !== columnKey) {
-      return <ArrowUpDown className="h-2.5 w-2.5 md:h-3.5 md:w-3.5 text-gray-400" />;
+      return <ArrowUpDown className="h-3.5 w-3.5 text-gray-400" />;
     }
     if (sortOrder === 'asc') {
-      return <ArrowUp className="h-2.5 w-2.5 md:h-3.5 md:w-3.5 text-black" />;
+      return <ArrowUp className="h-3.5 w-3.5 text-black" />;
     }
-    return <ArrowDown className="h-2.5 w-2.5 md:h-3.5 md:w-3.5 text-black" />;
+    return <ArrowDown className="h-3.5 w-3.5 text-black" />;
   };
 
   if (loading) {
     return (
-      <div className="w-full bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden p-4 md:p-8 text-center">
-        <p className="text-gray-500 text-sm md:text-base">loading markets...</p>
+      <div className="w-full bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden p-8 text-center">
+        <p className="text-gray-500">loading markets...</p>
       </div>
     );
   }
 
   if (events.length === 0) {
     return (
-      <div className="w-full bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden p-4 md:p-8 text-center">
-        <p className="text-gray-500 text-sm md:text-base">no markets found. try adjusting your filters.</p>
+      <div className="w-full bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden p-8 text-center">
+        <p className="text-gray-500">no markets found. try adjusting your filters.</p>
       </div>
     );
   }
 
   return (
     <div className="w-full bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden">
-      <div className="overflow-x-auto">
-        <Table className="table-fixed min-w-[600px] md:min-w-[800px]">
-        <TableHeader>
-          <TableRow className="hover:bg-transparent bg-gray-50 border-b border-gray-200">
-            <TableHead className="w-3 md:w-6"></TableHead>
-            <TableHead className="w-6 md:w-8"></TableHead>
-            <TableHead className="font-semibold text-gray-700 w-[26%] md:w-[29%] text-xs md:text-sm">market</TableHead>
-            
-            {/* Market-specific columns - only shown when expanded */}
-            <TableHead className="text-center font-semibold text-gray-700 w-[7%] md:w-[6%] text-xs md:text-sm">yes</TableHead>
-            <TableHead className="text-center font-semibold text-gray-700 w-[7%] md:w-[6%] text-xs md:text-sm">no</TableHead>
-            <TableHead className="text-center font-semibold text-gray-700 w-[8%] md:w-[7%] text-xs md:text-sm">24h Δ</TableHead>
+      {/* Scrollable container with fixed height */}
+      <div className="overflow-auto max-h-[calc(100vh-300px)]">
+        <Table className="min-w-[1000px]">
+          <TableHeader className="sticky top-0 z-10 bg-gray-50">
+            <TableRow className="hover:bg-transparent border-b border-gray-200">
+              <TableHead className="w-[40px] min-w-[40px] bg-gray-50"></TableHead>
+              <TableHead className="w-[50px] min-w-[50px] bg-gray-50"></TableHead>
+              <TableHead className="font-semibold text-gray-700 w-[300px] min-w-[200px] bg-gray-50">market</TableHead>
+              
+              {/* Market-specific columns */}
+              <TableHead className="text-center font-semibold text-gray-700 w-[80px] min-w-[80px] bg-gray-50">yes</TableHead>
+              <TableHead className="text-center font-semibold text-gray-700 w-[80px] min-w-[80px] bg-gray-50">no</TableHead>
+              <TableHead className="text-center font-semibold text-gray-700 w-[90px] min-w-[90px] bg-gray-50">24h Δ</TableHead>
 
-            <TableHead className="text-right font-semibold text-gray-700 w-[11%] md:w-[9%] text-xs md:text-sm">
-              <button
-                onClick={() => handleSort('volume')}
-                className="inline-flex items-center gap-0.5 md:gap-1 hover:text-black transition-colors ml-auto text-xs md:text-sm whitespace-nowrap"
-              >
-                vol
-                <SortIcon columnKey="volume" />
-              </button>
-            </TableHead>
+              <TableHead className="text-right font-semibold text-gray-700 w-[110px] min-w-[100px] bg-gray-50">
+                <button
+                  onClick={() => handleSort('volume')}
+                  className="inline-flex items-center gap-1 hover:text-black transition-colors ml-auto whitespace-nowrap"
+                >
+                  volume
+                  <SortIcon columnKey="volume" />
+                </button>
+              </TableHead>
 
-            <TableHead className="text-right font-semibold text-gray-700 w-[11%] md:w-[9%] text-xs md:text-sm">
-              <button
-                onClick={() => handleSort('volume24hr')}
-                className="inline-flex items-center gap-0.5 md:gap-1 hover:text-black transition-colors ml-auto text-xs md:text-sm whitespace-nowrap"
-              >
-                24h
-                <SortIcon columnKey="volume24hr" />
-              </button>
-            </TableHead>
+              <TableHead className="text-right font-semibold text-gray-700 w-[110px] min-w-[100px] bg-gray-50">
+                <button
+                  onClick={() => handleSort('volume24hr')}
+                  className="inline-flex items-center gap-1 hover:text-black transition-colors ml-auto whitespace-nowrap"
+                >
+                  24h vol
+                  <SortIcon columnKey="volume24hr" />
+                </button>
+              </TableHead>
 
-            <TableHead className="text-right font-semibold text-gray-700 w-[11%] md:w-[9%] text-xs md:text-sm">
-              <button
-                onClick={() => handleSort('liquidity')}
-                className="inline-flex items-center gap-0.5 md:gap-1 hover:text-black transition-colors ml-auto text-xs md:text-sm whitespace-nowrap"
-              >
-                liq
-                <SortIcon columnKey="liquidity" />
-              </button>
-            </TableHead>
+              <TableHead className="text-right font-semibold text-gray-700 w-[110px] min-w-[100px] bg-gray-50">
+                <button
+                  onClick={() => handleSort('liquidity')}
+                  className="inline-flex items-center gap-1 hover:text-black transition-colors ml-auto whitespace-nowrap"
+                >
+                  liquidity
+                  <SortIcon columnKey="liquidity" />
+                </button>
+              </TableHead>
 
-            <TableHead className="text-right font-semibold text-gray-700 w-[8%] md:w-[7%] text-xs md:text-sm">
-              <button
-                onClick={() => handleSort('volumeToLiquidityRatio')}
-                className="inline-flex items-center gap-0.5 md:gap-1 hover:text-black transition-colors ml-auto text-xs md:text-sm whitespace-nowrap"
-              >
-                v/r
-                <SortIcon columnKey="volumeToLiquidityRatio" />
-              </button>
-            </TableHead>
+              <TableHead className="text-right font-semibold text-gray-700 w-[90px] min-w-[90px] bg-gray-50">
+                <button
+                  onClick={() => handleSort('volumeToLiquidityRatio')}
+                  className="inline-flex items-center gap-1 hover:text-black transition-colors ml-auto whitespace-nowrap"
+                >
+                  vol-liq ratio
+                  <SortIcon columnKey="volumeToLiquidityRatio" />
+                </button>
+              </TableHead>
 
-            <TableHead className="text-right font-semibold text-gray-700 w-[11%] md:w-[9%] pr-2 md:pr-6 text-xs md:text-sm">
-              <button
-                onClick={() => handleSort('endDate')}
-                className="inline-flex items-center gap-0.5 md:gap-1 hover:text-black transition-colors ml-auto text-xs md:text-sm whitespace-nowrap"
-              >
-                end
-                <SortIcon columnKey="endDate" />
-              </button>
-            </TableHead>
-          </TableRow>
-        </TableHeader>
+              <TableHead className="text-right font-semibold text-gray-700 w-[120px] min-w-[100px] pr-6 bg-gray-50">
+                <button
+                  onClick={() => handleSort('endDate')}
+                  className="inline-flex items-center gap-1 hover:text-black transition-colors ml-auto whitespace-nowrap"
+                >
+                  end date
+                  <SortIcon columnKey="endDate" />
+                </button>
+              </TableHead>
+            </TableRow>
+          </TableHeader>
           <TableBody>
             {currentEvents.map((event) => {
               const isExpanded = expandedEvents.has(event.eventId);
@@ -243,10 +244,10 @@ export default function EventMarketTable({ events, loading }: EventMarketTablePr
                     className="border-b hover:bg-gray-50 cursor-pointer"
                     onClick={() => hasMarkets && toggleEvent(event.eventId)}
                   >
-                    <TableCell className="pl-1 md:pl-2">
+                    <TableCell className="pl-2 min-w-[40px]">
                       {hasMarkets && (
                         <button 
-                          className={`p-0.5 md:p-1 hover:bg-gray-200 rounded-sm transition-all duration-200 active:shadow-[inset_0_3px_6px_rgba(0,0,0,0.2)] active:translate-y-[2px] active:bg-gray-200 ${
+                          className={`p-1 hover:bg-gray-200 rounded-sm transition-all duration-200 active:shadow-[inset_0_3px_6px_rgba(0,0,0,0.2)] active:translate-y-[2px] active:bg-gray-200 ${
                             isExpanded 
                               ? "shadow-[inset_0_3px_6px_rgba(0.1,0.1,0.1,0.1)] translate-y-[2px] bg-gray-200" 
                               : ""
@@ -257,24 +258,24 @@ export default function EventMarketTable({ events, loading }: EventMarketTablePr
                           }}
                         >
                           {isExpanded ? (
-                            <ChevronDown className="h-3 w-3 md:h-4 md:w-4" />
+                            <ChevronDown className="h-4 w-4" />
                           ) : (
-                            <ChevronRight className="h-3 w-3 md:h-4 md:w-4" />
+                            <ChevronRight className="h-4 w-4" />
                           )}
                         </button>
                       )}
                     </TableCell>
-                    <TableCell className="py-2 md:py-3">
+                    <TableCell className="py-3 min-w-[50px]">
                       <Image
                         src={event.image}
                         alt={event.title}
-                        width={24}
-                        height={24}
-                        className="rounded object-cover aspect-square md:w-8 md:h-8"
+                        width={32}
+                        height={32}
+                        className="rounded object-cover aspect-square"
                       />
                     </TableCell>  
-                    <TableCell className="font-medium text-xs md:text-sm py-2 md:py-3">
-                      <div className="flex flex-col gap-0.5 md:gap-1">
+                    <TableCell className="font-medium py-3 min-w-[200px]">
+                      <div className="flex flex-col gap-1">
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <button 
@@ -292,7 +293,7 @@ export default function EventMarketTable({ events, loading }: EventMarketTablePr
                           </TooltipContent>
                         </Tooltip>
                         {event.new && (
-                          <span className="text-[10px] md:text-xs bg-blue-100 text-blue-700 px-1.5 md:px-2 py-0.5 rounded w-fit">
+                          <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded w-fit">
                             NEW
                           </span>
                         )}
@@ -300,25 +301,25 @@ export default function EventMarketTable({ events, loading }: EventMarketTablePr
                     </TableCell>
                     
                     {/* Empty cells for market columns */}
-                    <TableCell></TableCell>
-                    <TableCell></TableCell>
-                    <TableCell></TableCell>
+                    <TableCell className="min-w-[80px]"></TableCell>
+                    <TableCell className="min-w-[80px]"></TableCell>
+                    <TableCell className="min-w-[90px]"></TableCell>
 
-                    <TableCell className="text-right font-medium text-xs md:text-sm py-2 md:py-3">
+                    <TableCell className="text-right font-medium py-3 min-w-[100px]">
                       {formatCurrency(event.volume)}
                     </TableCell>
-                    <TableCell className="text-right font-medium text-xs md:text-sm py-2 md:py-3">
+                    <TableCell className="text-right font-medium py-3 min-w-[100px]">
                       {formatCurrency(event.volume24hr)}
                     </TableCell>
-                    <TableCell className="text-right font-medium text-xs md:text-sm py-2 md:py-3">
+                    <TableCell className="text-right font-medium py-3 min-w-[100px]">
                       {formatCurrency(event.liquidity)}
                     </TableCell>
-                    <TableCell className="text-right py-2 md:py-3">
-                      <span className={`inline-block px-1 md:px-2 py-0.5 md:py-1 rounded text-[10px] md:text-xs font-medium ${getVLRColorClass(eventVLR)}`}>
+                    <TableCell className="text-right py-3 min-w-[90px]">
+                      <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${getVLRColorClass(eventVLR)}`}>
                         {eventVLR.toFixed(2)}
                       </span>
                     </TableCell>
-                    <TableCell className="text-right font-medium text-xs md:text-sm pr-2 md:pr-6 py-2 md:py-3">
+                    <TableCell className="text-right font-medium pr-6 py-3 min-w-[100px]">
                       {formatDate(event.endDate)}
                     </TableCell>
                   </TableRow>
@@ -332,35 +333,35 @@ export default function EventMarketTable({ events, loading }: EventMarketTablePr
                         key={market.marketId}
                         className="border-b hover:bg-blue-50/30 bg-gray-50/50"
                       >
-                        <TableCell></TableCell>
-                        <TableCell className="py-2 md:py-3">
+                        <TableCell className="min-w-[40px]"></TableCell>
+                        <TableCell className="py-3 min-w-[50px]">
                           <Image
                             src={market.image}
                             alt={market.question}
-                            width={24}
-                            height={24}
-                            className="rounded object-cover aspect-square md:w-8 md:h-8"
+                            width={32}
+                            height={32}
+                            className="rounded object-cover aspect-square"
                           />
                         </TableCell>
-                        <TableCell className="pl-4 md:pl-8 py-2 md:py-3">
+                        <TableCell className="pl-8 py-3 min-w-[200px]">
                           <div className="flex flex-col gap-0.5">
-                            <span className="text-[11px] md:text-sm line-clamp-2">{market.groupItemTitle}</span>
+                            <span className="text-sm line-clamp-2">{market.groupItemTitle}</span>
                           </div>
                         </TableCell>
                         
                         {/* Market-specific data */}
-                        <TableCell className="text-center py-2 md:py-3">
-                          <span className="inline-block px-1 md:px-2 py-0.5 md:py-1 rounded text-[10px] md:text-xs font-medium bg-green-50 text-green-700">
+                        <TableCell className="text-center py-3 min-w-[80px]">
+                          <span className="inline-block px-2 py-1 rounded text-xs font-medium bg-green-50 text-green-700">
                             {formatPrice(market.outcomeYesPrice)}
                           </span>
                         </TableCell>
-                        <TableCell className="text-center py-2 md:py-3">
-                          <span className="inline-block px-1 md:px-2 py-0.5 md:py-1 rounded text-[10px] md:text-xs font-medium bg-red-50 text-red-700">
+                        <TableCell className="text-center py-3 min-w-[80px]">
+                          <span className="inline-block px-2 py-1 rounded text-xs font-medium bg-red-50 text-red-700">
                             {formatPrice(market.outcomeNoPrice)}
                           </span>
                         </TableCell>
-                        <TableCell className="text-center py-2 md:py-3">
-                          <span className={`inline-block px-1 md:px-2 py-0.5 md:py-1 rounded text-[10px] md:text-xs font-medium ${
+                        <TableCell className="text-center py-3 min-w-[90px]">
+                          <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
                             market.oneDayPriceChange >= 0 
                               ? 'bg-green-50 text-green-700' 
                               : 'bg-red-50 text-red-700'
@@ -369,21 +370,21 @@ export default function EventMarketTable({ events, loading }: EventMarketTablePr
                           </span>
                         </TableCell>
 
-                        <TableCell className="text-right text-[11px] md:text-sm py-2 md:py-3">
+                        <TableCell className="text-right py-3 min-w-[100px]">
                           {formatCurrency(market.volume)}
                         </TableCell>
-                        <TableCell className="text-right text-[11px] md:text-sm py-2 md:py-3">
+                        <TableCell className="text-right py-3 min-w-[100px]">
                           {formatCurrency(market.volume24hr)}
                         </TableCell>
-                        <TableCell className="text-right text-[11px] md:text-sm py-2 md:py-3">
+                        <TableCell className="text-right py-3 min-w-[100px]">
                           {formatCurrency(market.liquidity)}
                         </TableCell>
-                        <TableCell className="text-right py-2 md:py-3">
-                          <span className={`inline-block px-1 md:px-2 py-0.5 md:py-1 rounded text-[10px] md:text-xs font-medium ${getVLRColorClass(marketVLR)}`}>
+                        <TableCell className="text-right py-3 min-w-[90px]">
+                          <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${getVLRColorClass(marketVLR)}`}>
                             {marketVLR.toFixed(2)}
                           </span>
                         </TableCell>
-                        <TableCell className="text-right text-[11px] md:text-sm pr-2 md:pr-6 py-2 md:py-3">
+                        <TableCell className="text-right pr-6 py-3 min-w-[100px]">
                           {formatDate(event.endDate)}
                         </TableCell>
                       </TableRow>
@@ -397,7 +398,7 @@ export default function EventMarketTable({ events, loading }: EventMarketTablePr
       </div>
 
       {totalPages > 1 && (
-        <div className="p-2 md:p-4 border-t border-gray-200">
+        <div className="p-4 border-t border-gray-200">
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
