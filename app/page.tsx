@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import DashboardSection from "@/components/DashboardSection";
 import { PolymarketEvent, PolymarketMarket } from "@/lib/types";
 
+
 export default function Home() {
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
@@ -114,14 +115,15 @@ export default function Home() {
         const confidentBetsMarkets = allMarkets
           .filter(m => {
             const volume = m.volume || 0;
+            const volume24hr = m.volume24hr || 0;
             const yesPrice = m.outcomeYesPrice;
             const noPrice = m.outcomeNoPrice;
             
-            if (volume <= 200000) return false;
+            if (volume <= 200000 || volume24hr <= 50000) return false;
             
-            // Check if either Yes or No price is between 0.90 and 1.00
-            const isYesConfident = yesPrice !== null && yesPrice !== undefined && yesPrice >= 0.90 && yesPrice <= 1.00;
-            const isNoConfident = noPrice !== null && noPrice !== undefined && noPrice >= 0.90 && noPrice <= 1.00;
+            // Check if either Yes or No price is between 0.70 and 0.99
+            const isYesConfident = yesPrice !== null && yesPrice !== undefined && yesPrice >= 0.70 && yesPrice <= 0.99;
+            const isNoConfident = noPrice !== null && noPrice !== undefined && noPrice >= 0.70 && noPrice <= 0.99;
             
             return isYesConfident || isNoConfident;
           })
@@ -235,8 +237,8 @@ export default function Home() {
                 items={confidentBets}
                 type="market"
                 metricType="confidentBets"
-                description="markets with the most confident bets"
-                viewAllLink="/screener?filter=confident"
+                description="high chance but not financial advice!"
+                viewAllLink="/screener"
               />
             </div>
           </>

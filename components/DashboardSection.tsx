@@ -77,8 +77,13 @@ export default function DashboardSection({
     if (metricType === 'controversy') {
       return 'bg-purple-50 text-purple-700';
     }
-    if (metricType === 'confidentBets') {
-      return 'bg-emerald-50 text-emerald-700';
+    if (metricType === 'confidentBets' && 'outcomeYesPrice' in item && 'outcomeNoPrice' in item) {
+      // Green if Yes price is higher, Red if No price is higher
+      const yesPrice = item.outcomeYesPrice || 0;
+      const noPrice = item.outcomeNoPrice || 0;
+      return yesPrice > noPrice
+        ? 'bg-green-50 text-green-700'
+        : 'bg-red-50 text-red-700';
     }
     return 'bg-blue-50 text-blue-700';
   };
