@@ -152,7 +152,7 @@ export default function Home() {
       <Navbar />
       
       <div className="bg-white min-h-screen p-4 md:p-8">
-        <div className="mb-6">
+        <div className="mb-2">
           <h1 className="text-4xl font-medium text-gray-900 mb-2 text-center font-['Fredoka']">daily polymarket intelligence report</h1>
           <p className="text-gray-600 text-center mb-4">your daily edge in prediction market analysis.</p>
           
