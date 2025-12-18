@@ -12,7 +12,6 @@ interface FilterState {
   totalVolume: [number, number];
   volume24hr: [number, number];
   volume1wk?: [number, number];
-  volume1mo: [number, number];
   volume1yr?: [number, number];
   liquidity: [number, number];
   yesPrice?: [number, number];
@@ -22,7 +21,6 @@ interface FilterState {
   newMarkets?: boolean;
   featuredMarkets?: boolean;
   endingSoon: boolean;
-  negRiskMarkets: boolean;
 }
 
 interface FilterPopoverProps {
