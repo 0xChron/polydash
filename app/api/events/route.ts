@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
     const { data: eventsData, error: eventsError } = await supabase
       .from('events')
       .select('*')
-      .order('volume', { ascending: false });
+      .order('volume24hr', { ascending: false });
 
     if (eventsError) {
       console.error('Supabase error:', eventsError);
