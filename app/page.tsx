@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import DashboardSection from "@/components/DashboardSection";
 import { PolymarketEvent, PolymarketMarket } from "@/lib/types";
 
+const COUNT_MARKETS_DISPLAY = 20;
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
@@ -49,13 +50,13 @@ export default function Home() {
         const sortedByVolume24hr = [...data].sort((a, b) => 
           (b.volume24hr || 0) - (a.volume24hr || 0)
         );
-        setHotMarkets(sortedByVolume24hr.slice(0, 5));
+        setHotMarkets(sortedByVolume24hr.slice(0, COUNT_MARKETS_DISPLAY));
 
         // Sort events by liquidity
         const sortedByLiquidity = [...data].sort((a, b) => 
           (b.liquidity || 0) - (a.liquidity || 0)
         );
-        setTopLiquidity(sortedByLiquidity.slice(0, 5));
+        setTopLiquidity(sortedByLiquidity.slice(0, COUNT_MARKETS_DISPLAY));
 
         // Extract all markets from events
         const allMarkets: PolymarketMarket[] = data.flatMap((event) => 
@@ -75,7 +76,7 @@ export default function Home() {
         const gainers = marketsWithPriceChange
           .filter(m => m.oneDayPriceChange > 0)
           .sort((a, b) => b.oneDayPriceChange - a.oneDayPriceChange)
-          .slice(0, 5);
+          .slice(0, COUNT_MARKETS_DISPLAY);
         setTopGainers(gainers);
         console.log('Top gainers:', gainers.length); // Debug log
 
@@ -83,7 +84,7 @@ export default function Home() {
         const losers = marketsWithPriceChange
           .filter(m => m.oneDayPriceChange < 0)
           .sort((a, b) => a.oneDayPriceChange - b.oneDayPriceChange)
-          .slice(0, 5);
+          .slice(0, COUNT_MARKETS_DISPLAY);
         setTopLosers(losers);
         console.log('Top losers:', losers.length); // Debug log
 
@@ -107,7 +108,7 @@ export default function Home() {
             distanceFrom50: Math.abs((m.outcomeYesPrice || 0) - 0.5)
           }))
           .sort((a, b) => a.distanceFrom50 - b.distanceFrom50)
-          .slice(0, 5);
+          .slice(0, COUNT_MARKETS_DISPLAY);
         setControversial(controversialMarkets);
         console.log('Controversial markets:', controversialMarkets.length); // Debug log
 
@@ -133,7 +134,7 @@ export default function Home() {
             const bConfidence = Math.max(b.outcomeYesPrice || 0, b.outcomeNoPrice || 0);
             return bConfidence - aConfidence;
           })
-          .slice(0, 5);
+          .slice(0, COUNT_MARKETS_DISPLAY);
         setConfidentBets(confidentBetsMarkets);
         console.log('Confident bets:', confidentBetsMarkets.length); // Debug log
 
@@ -193,7 +194,6 @@ export default function Home() {
                 type="event"
                 metricType="volume24hr"
                 description="top markets by 24 hour volume"
-                viewAllLink="/screener?sort=volume24hr"
               />
               
               <DashboardSection
@@ -202,7 +202,6 @@ export default function Home() {
                 type="event"
                 metricType="liquidity"
                 description="top markets by liquidity"
-                viewAllLink="/screener?sort=liquidity"
               />
               
               <DashboardSection
@@ -211,7 +210,6 @@ export default function Home() {
                 type="market"
                 metricType="priceChange"
                 description="highest +% price change"
-                viewAllLink="/screener?filter=gainers"
               />
               
               <DashboardSection
@@ -220,7 +218,6 @@ export default function Home() {
                 type="market"
                 metricType="priceChange"
                 description="highest -% price change"
-                viewAllLink="/screener?filter=losers"
               />
               
               <DashboardSection
@@ -229,7 +226,6 @@ export default function Home() {
                 type="market"
                 metricType="controversy"
                 description="markets with close disagreement"
-                viewAllLink="/screener?filter=controversial"
               />
 
               <DashboardSection
@@ -238,7 +234,6 @@ export default function Home() {
                 type="market"
                 metricType="confidentBets"
                 description="high chance but not financial advice!"
-                viewAllLink="/screener"
               />
             </div>
           </>

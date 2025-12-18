@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -58,7 +58,6 @@ export default function DashboardSection({
         return 'N/A';
       case 'confidentBets':
         if ('outcomeYesPrice' in item && 'outcomeNoPrice' in item) {
-          // Show the higher confidence price
           const maxPrice = Math.max(item.outcomeYesPrice || 0, item.outcomeNoPrice || 0);
           return formatPrice(maxPrice);
         }
@@ -71,21 +70,20 @@ export default function DashboardSection({
   const getMetricBadgeClass = (item: PolymarketEvent | PolymarketMarket) => {
     if (metricType === 'priceChange' && 'oneDayPriceChange' in item) {
       return item.oneDayPriceChange >= 0 
-        ? 'bg-green-50 text-green-700'
-        : 'bg-red-50 text-red-700';
+        ? 'bg-green-50 text-green-700 border border-green-200'
+        : 'bg-red-50 text-red-700 border border-red-200';
     }
     if (metricType === 'controversy') {
-      return 'bg-purple-50 text-purple-700';
+      return 'bg-purple-50 text-purple-700 border border-purple-200';
     }
     if (metricType === 'confidentBets' && 'outcomeYesPrice' in item && 'outcomeNoPrice' in item) {
-      // Green if Yes price is higher, Red if No price is higher
       const yesPrice = item.outcomeYesPrice || 0;
       const noPrice = item.outcomeNoPrice || 0;
       return yesPrice > noPrice
-        ? 'bg-green-50 text-green-700'
-        : 'bg-red-50 text-red-700';
+        ? 'bg-green-50 text-green-700 border border-green-200'
+        : 'bg-red-50 text-red-700 border border-red-200';
     }
-    return 'bg-blue-50 text-blue-700';
+    return 'bg-blue-50 text-blue-700 border border-blue-200';
   };
 
   const getItemTitle = (item: PolymarketEvent | PolymarketMarket) => {
@@ -107,25 +105,16 @@ export default function DashboardSection({
   };
 
   return (
-    <Card className="h-full flex flex-col">
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <CardTitle className="text-lg font-semibold">{title}</CardTitle>
-            <CardDescription className="text-xs mt-1">
-              ({description})
-            </CardDescription>
-          </div>
-          <Link 
-            href={viewAllLink}
-            className="text-sm text-black hover:text-gray-500 flex items-center gap-1 transition-colors"
-          >
-            details
-            <ArrowRight className="h-4 w-4" />
-          </Link>
+    <Card className="flex flex-col h-[450px]">
+      <CardHeader className="pb-3 flex-shrink-0">
+        <div className="flex items-baseline gap-2">
+          <CardTitle className="text-lg font-semibold">{title}</CardTitle>
+          <CardDescription className="text-xs">
+            ({description})
+          </CardDescription>
         </div>
       </CardHeader>
-      <CardContent className="flex-1 pt-0">
+      <CardContent className="flex-1 pt-0 overflow-y-auto">
         {items.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-8">No data available</p>
         ) : (
@@ -155,7 +144,7 @@ export default function DashboardSection({
                     {type === 'event' ? 'Event' : 'Market'}
                   </p>
                 </div>
-                <div className={`px-2 py-1 rounded-sm text-xs font-semibold whitespace-nowrap ${getMetricBadgeClass(item)}`}>
+                <div className={`px-2 py-1 rounded-md text-xs font-semibold whitespace-nowrap ${getMetricBadgeClass(item)}`}>
                   {getMetricValue(item)}
                 </div>
               </a>
