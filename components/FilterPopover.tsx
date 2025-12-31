@@ -5,8 +5,9 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
-import { Filter, TrendingUp, Clock, Calendar, Droplets, TrendingDown } from "lucide-react";
+import { Filter, TrendingUp, Clock, Droplets, TrendingDown } from "lucide-react";
 import { useState } from "react";
+import { formatVolume } from "@/lib/utils";
 
 interface FilterState {
   totalVolume: [number, number];
@@ -30,20 +31,6 @@ interface FilterPopoverProps {
   onApply: () => void;
   type?: 'events' | 'markets';
 }
-
-const formatVolume = (value: number): string => {
-  if (value === 0) return "$0";
-  if (value >= 1000000000) return `$${(value / 1000000000).toFixed(1)}B`;
-  if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
-  if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`;
-  return `$${value}`;
-};
-
-const formatPrice = (value: number): string => {
-  if (value === 1) return "$1";
-  if (value === 0) return "$0";
-  return `${(value * 100).toFixed(0)}¢`;
-};
 
 export default function FilterPopover({ filters, onFilterChange, onClear, onApply, type = 'events' }: FilterPopoverProps) {
   const isNew = type === 'events' ? filters.newEvents : filters.newMarkets;

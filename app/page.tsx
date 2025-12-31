@@ -24,8 +24,6 @@ export default function Home() {
         const response = await fetch('/api/events');
         const result = await response.json();
         
-        console.log('API Response:', result); // Debug log
-        
         // Handle the API response structure: { success, count, data }
         let data: PolymarketEvent[] = [];
         if (result.data && Array.isArray(result.data)) {
@@ -197,14 +195,6 @@ export default function Home() {
               />
               
               <DashboardSection
-                title="💰 top liquidity"
-                items={topLiquidity}
-                type="event"
-                metricType="liquidity"
-                description="top markets by liquidity"
-              />
-              
-              <DashboardSection
                 title="📈 top gainers"
                 items={topGainers}
                 type="market"
@@ -219,7 +209,15 @@ export default function Home() {
                 metricType="priceChange"
                 description="highest -% price change"
               />
-              
+
+              <DashboardSection
+                title="💰 top liquidity"
+                items={topLiquidity}
+                type="event"
+                metricType="liquidity"
+                description="top markets by liquidity"
+              />
+
               <DashboardSection
                 title="⚖️ controversial markets"
                 items={controversial}
