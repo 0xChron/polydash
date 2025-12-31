@@ -14,18 +14,18 @@ get deeper insights into polymarket data with:
 
 ## features
 
-### 📊 events tab
-browse and analyze polymarket events with detailed metrics:
-- total volume and liquidity
-- event end dates and timelines
-- featured events and winner-take-all markets
-- new events and markets ending soon
+### 📊 dashboard tab
+analyze markets with summarized report on:
+- hot
+- top gainers and losers
+- highest liquidity markets
+- controversial markets
+- most confident bets
 
-### 📈 markets tab
+### 📈 screener tab
 dive into individual market performance:
 - market volume and liquidity depth
 - resolution dates
-- market tags (new, ending soon, featured, winner-take-all)
 - price changes
 
 ### 👥 traders tab
