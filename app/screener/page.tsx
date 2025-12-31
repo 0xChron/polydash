@@ -13,7 +13,6 @@ export default function MarketsPage() {
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
 
   useEffect(() => {
-    // Extract fetchDate from first event when events are loaded
     if (eventFilters.events.length > 0 && eventFilters.events[0].fetchDate) {
       setLastUpdated(eventFilters.events[0].fetchDate);
     }
@@ -29,7 +28,7 @@ export default function MarketsPage() {
             value={eventFilters.searchQuery}
             onChange={eventFilters.setSearchQuery}
             onSearch={eventFilters.applyFilters}
-            placeholder="search events and markets"
+            placeholder="search markets (e.g., fed rates, elections, nba, etc.)"
           />
           <FilterPopover
             filters={eventFilters.filters}

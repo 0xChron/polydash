@@ -1,26 +1,10 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { ArrowRight } from "lucide-react";
-import Link from "next/link";
 import Image from "next/image";
 import { PolymarketEvent, PolymarketMarket } from "@/lib/types";
+import { formatCurrency, formatPercentage, formatPrice } from "@/lib/utils";
 
-const formatCurrency = (value: number) => {
-  if (value > 1_000_000_000) return `$${(value / 1_000_000_000).toFixed(2)}B`;
-  if (value > 1_000_000) return `$${(value / 1_000_000).toFixed(2)}M`;
-  if (value > 1_000) return `$${(value / 1_000).toFixed(2)}K`;
-  return `$${value.toFixed(2)}`;
-};
-
-const formatPercentage = (value: number) => {
-  const sign = value >= 0 ? '+' : '';
-  return `${sign}${(value * 100).toFixed(2)}%`;
-};
-
-const formatPrice = (value: number): string => {
-  return `${(value * 100).toFixed(1)}¢`;
-};
 
 interface DashboardSectionProps {
   title: string;
@@ -36,8 +20,7 @@ export default function DashboardSection({
   items, 
   type, 
   metricType,
-  description,
-  viewAllLink = '/screener'
+  description
 }: DashboardSectionProps) {
   
   const getMetricValue = (item: PolymarketEvent | PolymarketMarket) => {
@@ -106,7 +89,7 @@ export default function DashboardSection({
 
   return (
     <Card className="flex flex-col h-[450px]">
-      <CardHeader className="pb-3 flex-shrink-0">
+      <CardHeader className="pb-3 shrink-0">
         <div className="flex items-baseline gap-2">
           <CardTitle className="text-lg font-semibold">{title}</CardTitle>
           <CardDescription className="text-xs">

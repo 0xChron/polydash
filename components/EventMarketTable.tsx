@@ -14,49 +14,19 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { PolymarketEvent, PolymarketMarket } from "@/lib/types";
 import { Pagination } from "@/components/ui/pagination";
 import { ArrowUpDown, ArrowUp, ArrowDown, ChevronRight, ChevronDown } from "lucide-react";
 import React from "react";
 import Image from "next/image";
-
-const formatCurrency = (value: number) => {
-  if (value > 1_000_000_000) return `$${(value / 1_000_000_000).toFixed(2)}B`;
-  if (value > 1_000_000) return `$${(value / 1_000_000).toFixed(2)}M`;
-  if (value > 1_000) return `$${(value / 1_000).toFixed(2)}K`;
-  return `$${value.toFixed(2)}`;
-};
-
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
-}
-
-const formatPercentage = (value: number) => {
-  const sign = value >= 0 ? '+' : '';
-  return `${sign}${(value * 100).toFixed(2)}%`;
-}
-
-const formatPrice = (value: number): string => {
-  return `${(value * 100).toFixed(1)}¢`;
-};
-
-const calculateVLR = (volume: number, liquidity: number): number => {
-  if (liquidity === 0 || !liquidity) return 0;
-  return volume / liquidity;
-};
-
-const getVLRColorClass = (vlr: number): string => {
-  if (vlr === 0) return 'bg-red-50 text-red-700';
-  if (vlr < 0.1) return 'bg-orange-50 text-orange-700';
-  if (vlr < 3) return 'bg-yellow-50 text-yellow-700';
-  if (vlr < 20) return 'bg-green-50 text-green-700';
-  return 'bg-orange-50 text-orange-700';
-};
+import { 
+  formatCurrency, 
+  formatPercentage, 
+  formatPrice,
+  formatDate,
+  calculateVLR,
+  getVLRColorClass 
+} from '@/lib/utils';
+import { PolymarketEvent } from "@/lib/types";
 
 interface EventMarketTableProps {
   events: PolymarketEvent[];
